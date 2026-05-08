@@ -1,0 +1,920 @@
+{% liquid
+  assign section_id = 'skinea-premium-ritual-' | append: section.id
+  assign feature_blocks = section.blocks | where: 'type', 'feature'
+  assign card_blocks = section.blocks | where: 'type', 'card'
+%}
+
+<section
+  id="{{ section_id }}"
+  class="skinea-ritual"
+  style="
+    --skinea-bg: {{ section.settings.background_color }};
+    --skinea-panel: {{ section.settings.panel_color }};
+    --skinea-text: {{ section.settings.text_color }};
+    --skinea-muted: {{ section.settings.muted_color }};
+    --skinea-accent: {{ section.settings.accent_color }};
+    --skinea-accent-soft: {{ section.settings.accent_soft_color }};
+    --skinea-radius: {{ section.settings.corner_radius }}px;
+    --skinea-padding-top: {{ section.settings.padding_top }}px;
+    --skinea-padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="skinea-ritual__shell page-width">
+    <div class="skinea-ritual__header skinea-reveal">
+      {% if section.settings.eyebrow != blank %}
+        <p class="skinea-ritual__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2 class="skinea-ritual__heading">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      {% if section.settings.description != blank %}
+        <div class="skinea-ritual__description">{{ section.settings.description }}</div>
+      {% endif %}
+    </div>
+
+    <div class="skinea-ritual__layout">
+      <div class="skinea-ritual__editorial skinea-reveal">
+        <div class="skinea-ritual__media-frame">
+          {% if section.settings.hero_image != blank %}
+            {{
+              section.settings.hero_image
+              | image_url: width: 1400
+              | image_tag:
+                class: 'skinea-ritual__image',
+                loading: 'lazy',
+                sizes: '(min-width: 990px) 48vw, 100vw',
+                widths: '375, 550, 750, 990, 1200, 1400'
+            }}
+          {% else %}
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'skinea-ritual__placeholder' }}
+          {% endif %}
+
+          <div class="skinea-ritual__glow" aria-hidden="true"></div>
+
+          {% if section.settings.badge_text != blank %}
+            <div class="skinea-ritual__badge">
+              <span>{{ section.settings.badge_text | escape }}</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="skinea-ritual__content">
+        {% if feature_blocks.size > 0 %}
+          <div class="skinea-ritual__features skinea-reveal">
+            {% for block in feature_blocks %}
+              <div class="skinea-ritual__feature" {{ block.shopify_attributes }}>
+                {% if block.settings.label != blank %}
+                  <span>{{ block.settings.label | escape }}</span>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="skinea-ritual__cta-panel skinea-reveal">
+          {% if section.settings.panel_heading != blank %}
+            <h3 class="skinea-ritual__panel-heading">{{ section.settings.panel_heading | escape }}</h3>
+          {% endif %}
+
+          {% if section.settings.panel_text != blank %}
+            <p class="skinea-ritual__panel-text">{{ section.settings.panel_text | escape }}</p>
+          {% endif %}
+
+          <div class="skinea-ritual__actions">
+            {% if section.settings.primary_label != blank %}
+              <a
+                class="skinea-ritual__button skinea-ritual__button--primary"
+                href="{{ section.settings.primary_link | default: routes.all_products_collection_url }}"
+              >
+                {{ section.settings.primary_label | escape }}
+              </a>
+            {% endif %}
+
+            {% if section.settings.secondary_label != blank and section.settings.secondary_link != blank %}
+              <a class="skinea-ritual__button skinea-ritual__button--secondary" href="{{ section.settings.secondary_link }}">
+                {{ section.settings.secondary_label | escape }}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if card_blocks.size > 0 %}
+          <div class="skinea-ritual__cards">
+            {% for block in card_blocks %}
+              {% liquid
+                assign card_tag = 'div'
+                if block.settings.link != blank
+                  assign card_tag = 'a'
+                endif
+              %}
+
+              <{{ card_tag }}
+                class="skinea-card skinea-reveal"
+                {% if block.settings.link != blank %}
+                  href="{{ block.settings.link }}"
+                {% endif %}
+                {{ block.shopify_attributes }}
+              >
+                <div class="skinea-card__media">
+                  {% if block.settings.image != blank %}
+                    {{
+                      block.settings.image
+                      | image_url: width: 700
+                      | image_tag:
+                        class: 'skinea-card__image',
+                        loading: 'lazy',
+                        sizes: '(min-width: 990px) 18vw, (min-width: 750px) 30vw, 82vw',
+                        widths: '250, 375, 550, 700'
+                    }}
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag: 'skinea-card__placeholder' }}
+                  {% endif %}
+                </div>
+
+                <div class="skinea-card__content">
+                  {% if block.settings.kicker != blank %}
+                    <p class="skinea-card__kicker">{{ block.settings.kicker | escape }}</p>
+                  {% endif %}
+
+                  {% if block.settings.title != blank %}
+                    <h3 class="skinea-card__title">{{ block.settings.title | escape }}</h3>
+                  {% endif %}
+
+                  {% if block.settings.text != blank %}
+                    <p class="skinea-card__text">{{ block.settings.text | escape }}</p>
+                  {% endif %}
+
+                  {% if block.settings.cta_label != blank %}
+                    <span class="skinea-card__link">
+                      {{ block.settings.cta_label | escape }}
+                      <span aria-hidden="true">+</span>
+                    </span>
+                  {% endif %}
+                </div>
+              </{{ card_tag }}>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .skinea-ritual {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--skinea-accent-soft) 58%, transparent) 0 18rem, transparent 32rem),
+      linear-gradient(180deg, var(--skinea-bg) 0%, #ffffff 100%);
+    color: var(--skinea-text);
+    padding-block: var(--skinea-padding-top) var(--skinea-padding-bottom);
+  }
+
+  .skinea-ritual *,
+  .skinea-ritual *::before,
+  .skinea-ritual *::after {
+    box-sizing: border-box;
+  }
+
+  .skinea-ritual__shell {
+    width: min(100%, 124rem);
+    margin-inline: auto;
+    padding-inline: clamp(1.6rem, 4vw, 5rem);
+  }
+
+  .skinea-ritual__header {
+    display: grid;
+    gap: 1.4rem;
+    max-width: 76rem;
+    margin: 0 auto clamp(3rem, 6vw, 7rem);
+    text-align: center;
+  }
+
+  .skinea-ritual__eyebrow,
+  .skinea-card__kicker {
+    margin: 0;
+    color: var(--skinea-accent);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .skinea-ritual__heading {
+    max-width: 70rem;
+    margin: 0 auto;
+    color: var(--skinea-text);
+    font-family: var(--font-heading-family, Georgia, serif);
+    font-size: clamp(3.2rem, 6vw, 7.6rem);
+    font-style: var(--font-heading-style, normal);
+    font-weight: 500;
+    letter-spacing: -0.055em;
+    line-height: 0.94;
+  }
+
+  .skinea-ritual__heading em {
+    color: var(--skinea-accent);
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .skinea-ritual__description {
+    max-width: 60rem;
+    margin-inline: auto;
+    color: var(--skinea-muted);
+    font-size: clamp(1.5rem, 1.8vw, 1.8rem);
+    letter-spacing: 0.01em;
+    line-height: 1.75;
+  }
+
+  .skinea-ritual__description p {
+    margin: 0;
+  }
+
+  .skinea-ritual__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(32rem, 0.98fr);
+    align-items: center;
+    gap: clamp(2.4rem, 5vw, 7rem);
+  }
+
+  .skinea-ritual__editorial,
+  .skinea-ritual__media-frame {
+    min-width: 0;
+  }
+
+  .skinea-ritual__media-frame {
+    position: relative;
+    overflow: hidden;
+    min-height: clamp(42rem, 55vw, 68rem);
+    border: 0.1rem solid color-mix(in srgb, var(--skinea-accent) 16%, transparent);
+    border-radius: calc(var(--skinea-radius) + 1.8rem);
+    background: var(--skinea-panel);
+    box-shadow: 0 2.4rem 7rem rgba(86, 54, 61, 0.12);
+    isolation: isolate;
+  }
+
+  .skinea-ritual__image,
+  .skinea-ritual__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    object-fit: cover;
+    transform: scale(1.01);
+    transition: transform 900ms cubic-bezier(0.2, 0.65, 0.2, 1);
+  }
+
+  .skinea-ritual__media-frame:hover .skinea-ritual__image {
+    transform: scale(1.045);
+  }
+
+  .skinea-ritual__placeholder {
+    background: linear-gradient(135deg, #fff7f8, #f5e3e6);
+    fill: color-mix(in srgb, var(--skinea-accent) 24%, #ffffff);
+  }
+
+  .skinea-ritual__glow {
+    position: absolute;
+    inset: auto -12% -18% 18%;
+    height: 42%;
+    border-radius: 999rem;
+    background: radial-gradient(circle, color-mix(in srgb, var(--skinea-accent-soft) 74%, transparent) 0%, transparent 68%);
+    filter: blur(1.5rem);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .skinea-ritual__badge {
+    position: absolute;
+    right: clamp(1.4rem, 4vw, 3.2rem);
+    bottom: clamp(1.4rem, 4vw, 3.2rem);
+    z-index: 2;
+    display: grid;
+    width: clamp(10.8rem, 15vw, 15.4rem);
+    aspect-ratio: 1;
+    place-items: center;
+    border: 0.1rem solid rgba(255, 255, 255, 0.68);
+    border-radius: 999rem;
+    background: rgba(255, 255, 255, 0.76);
+    box-shadow: 0 1.6rem 4rem rgba(78, 46, 54, 0.14);
+    color: var(--skinea-text);
+    font-family: var(--font-heading-family, Georgia, serif);
+    font-size: clamp(1.3rem, 1.5vw, 1.7rem);
+    line-height: 1.2;
+    text-align: center;
+    backdrop-filter: blur(1.6rem);
+  }
+
+  .skinea-ritual__content {
+    display: grid;
+    gap: clamp(1.8rem, 3vw, 2.8rem);
+  }
+
+  .skinea-ritual__features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .skinea-ritual__feature {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-height: 4rem;
+    padding: 0.9rem 1.4rem;
+    border: 0.1rem solid color-mix(in srgb, var(--skinea-accent) 18%, transparent);
+    border-radius: 999rem;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 1rem 2.6rem rgba(86, 54, 61, 0.06);
+    color: var(--skinea-text);
+    font-size: 1.25rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+
+  .skinea-ritual__feature::before {
+    content: "";
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 999rem;
+    background: var(--skinea-accent);
+    box-shadow: 0 0 0 0.4rem color-mix(in srgb, var(--skinea-accent-soft) 80%, transparent);
+  }
+
+  .skinea-ritual__cta-panel,
+  .skinea-card {
+    border: 0.1rem solid color-mix(in srgb, var(--skinea-accent) 14%, transparent);
+    background: color-mix(in srgb, var(--skinea-panel) 90%, #ffffff);
+    box-shadow: 0 1.8rem 5.5rem rgba(82, 50, 59, 0.09);
+    backdrop-filter: blur(1.8rem);
+  }
+
+  .skinea-ritual__cta-panel {
+    display: grid;
+    gap: 1.7rem;
+    padding: clamp(2.2rem, 4vw, 4rem);
+    border-radius: var(--skinea-radius);
+  }
+
+  .skinea-ritual__panel-heading {
+    margin: 0;
+    color: var(--skinea-text);
+    font-family: var(--font-heading-family, Georgia, serif);
+    font-size: clamp(2.4rem, 3vw, 3.7rem);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 1.04;
+  }
+
+  .skinea-ritual__panel-text {
+    max-width: 48rem;
+    margin: 0;
+    color: var(--skinea-muted);
+    font-size: 1.5rem;
+    line-height: 1.7;
+  }
+
+  .skinea-ritual__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-top: 0.6rem;
+  }
+
+  .skinea-ritual__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.8rem;
+    padding: 1.3rem 2.2rem;
+    border: 0.1rem solid var(--skinea-text);
+    border-radius: 999rem;
+    font-size: 1.25rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+      background-color 220ms ease,
+      border-color 220ms ease,
+      color 220ms ease,
+      transform 220ms ease,
+      box-shadow 220ms ease;
+  }
+
+  .skinea-ritual__button:hover,
+  .skinea-card:hover {
+    transform: translateY(-0.3rem);
+  }
+
+  .skinea-ritual__button:focus-visible,
+  .skinea-card:focus-visible {
+    outline: 0.2rem solid var(--skinea-accent);
+    outline-offset: 0.3rem;
+  }
+
+  .skinea-ritual__button--primary {
+    background: var(--skinea-text);
+    box-shadow: 0 1.4rem 2.8rem rgba(48, 30, 36, 0.18);
+    color: #ffffff;
+  }
+
+  .skinea-ritual__button--primary:hover {
+    background: var(--skinea-accent);
+    border-color: var(--skinea-accent);
+    box-shadow: 0 1.6rem 3.2rem color-mix(in srgb, var(--skinea-accent) 26%, transparent);
+  }
+
+  .skinea-ritual__button--secondary {
+    background: rgba(255, 255, 255, 0.55);
+    color: var(--skinea-text);
+  }
+
+  .skinea-ritual__button--secondary:hover {
+    border-color: var(--skinea-accent);
+    color: var(--skinea-accent);
+  }
+
+  .skinea-ritual__cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.2rem;
+  }
+
+  .skinea-card {
+    display: grid;
+    overflow: hidden;
+    border-radius: calc(var(--skinea-radius) - 0.6rem);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      transform 260ms ease,
+      box-shadow 260ms ease,
+      border-color 260ms ease;
+  }
+
+  .skinea-card:hover {
+    border-color: color-mix(in srgb, var(--skinea-accent) 32%, transparent);
+    box-shadow: 0 2.4rem 5.8rem rgba(82, 50, 59, 0.13);
+  }
+
+  .skinea-card__media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1 / 1.08;
+    background: linear-gradient(145deg, #fff9f9, color-mix(in srgb, var(--skinea-accent-soft) 76%, #ffffff));
+  }
+
+  .skinea-card__image,
+  .skinea-card__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 700ms cubic-bezier(0.2, 0.65, 0.2, 1);
+  }
+
+  .skinea-card:hover .skinea-card__image {
+    transform: scale(1.06);
+  }
+
+  .skinea-card__placeholder {
+    fill: color-mix(in srgb, var(--skinea-accent) 24%, #ffffff);
+  }
+
+  .skinea-card__content {
+    display: grid;
+    gap: 0.7rem;
+    padding: 1.6rem;
+  }
+
+  .skinea-card__title {
+    margin: 0;
+    color: var(--skinea-text);
+    font-family: var(--font-heading-family, Georgia, serif);
+    font-size: clamp(1.75rem, 1.7vw, 2.2rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+  }
+
+  .skinea-card__text {
+    margin: 0;
+    color: var(--skinea-muted);
+    font-size: 1.28rem;
+    line-height: 1.55;
+  }
+
+  .skinea-card__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.3rem;
+    color: var(--skinea-accent);
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .skinea-card__link span {
+    display: grid;
+    width: 2.2rem;
+    height: 2.2rem;
+    place-items: center;
+    border: 0.1rem solid currentColor;
+    border-radius: 999rem;
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+
+  .skinea-reveal {
+    opacity: 0;
+    transform: translateY(2.2rem);
+    transition:
+      opacity 700ms ease,
+      transform 700ms cubic-bezier(0.2, 0.65, 0.2, 1);
+  }
+
+  .skinea-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media screen and (max-width: 989px) {
+    .skinea-ritual__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .skinea-ritual__media-frame {
+      min-height: clamp(34rem, 72vw, 56rem);
+    }
+
+    .skinea-ritual__cards {
+      grid-template-columns: repeat(3, minmax(18rem, 1fr));
+      margin-inline: calc(clamp(1.6rem, 4vw, 5rem) * -1);
+      padding: 0 clamp(1.6rem, 4vw, 5rem) 1rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: thin;
+    }
+
+    .skinea-card {
+      scroll-snap-align: start;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .skinea-ritual__shell {
+      padding-inline: 1.6rem;
+    }
+
+    .skinea-ritual__header {
+      text-align: left;
+    }
+
+    .skinea-ritual__heading,
+    .skinea-ritual__description {
+      margin-inline: 0;
+    }
+
+    .skinea-ritual__features {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .skinea-ritual__feature {
+      justify-content: flex-start;
+    }
+
+    .skinea-ritual__actions {
+      display: grid;
+    }
+
+    .skinea-ritual__button {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skinea-ritual *,
+    .skinea-ritual *::before,
+    .skinea-ritual *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 1ms !important;
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+    }
+
+    .skinea-reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  const initSkineaReveal = () => {
+    const elements = document.querySelectorAll('.skinea-reveal:not(.is-visible)')
+
+    if (!elements.length) return
+
+    if (!('IntersectionObserver' in window)) {
+      elements.forEach((element) => element.classList.add('is-visible'))
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          entry.target.classList.add('is-visible')
+          observer.unobserve(entry.target)
+        })
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.12 }
+    )
+
+    elements.forEach((element, index) => {
+      element.style.transitionDelay = `${Math.min(index * 70, 420)}ms`
+      observer.observe(element)
+    })
+  }
+
+  initSkineaReveal()
+  document.addEventListener('shopify:section:load', initSkineaReveal)
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Skinea premium ritual",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Skinea ritual edit"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Elevated skincare for a <em>quiet glow</em>"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Curate a refined regimen with soft-touch essentials, targeted treatments, and skin-first tools designed for luminous everyday care.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero image"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "Clean ritual approved"
+    },
+    {
+      "type": "header",
+      "content": "Conversion panel"
+    },
+    {
+      "type": "text",
+      "id": "panel_heading",
+      "label": "Panel heading",
+      "default": "Build your glow routine in minutes"
+    },
+    {
+      "type": "textarea",
+      "id": "panel_text",
+      "label": "Panel text",
+      "default": "Guide shoppers into best sellers, skin concerns, and ritual bundles with a polished editorial section built for product discovery."
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Primary button label",
+      "default": "Shop best sellers"
+    },
+    {
+      "type": "url",
+      "id": "primary_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Secondary button label",
+      "default": "Find your ritual"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#fffaf9"
+    },
+    {
+      "type": "color",
+      "id": "panel_color",
+      "label": "Panel",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#2f2628"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Muted text",
+      "default": "#78676b"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#b9828d"
+    },
+    {
+      "type": "color",
+      "id": "accent_soft_color",
+      "label": "Soft accent",
+      "default": "#f5dfe3"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "min": 12,
+      "max": 44,
+      "step": 2,
+      "unit": "px",
+      "label": "Corner radius",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 32,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 32,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 96
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Trust feature",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Derm-inspired"
+        }
+      ]
+    },
+    {
+      "type": "card",
+      "name": "Discovery card",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "kicker",
+          "label": "Kicker",
+          "default": "Routine"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Daily luminosity"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Soft hydration and glow-focused essentials."
+        },
+        {
+          "type": "text",
+          "id": "cta_label",
+          "label": "CTA label",
+          "default": "Explore"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Skinea premium ritual",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "label": "Clean beauty"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "label": "Sensitive-skin friendly"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "label": "Ritual-ready bundles"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "kicker": "Best sellers",
+            "title": "Glow icons",
+            "text": "Signature staples shoppers return to.",
+            "cta_label": "Shop now"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "kicker": "Concern",
+            "title": "Calm and restore",
+            "text": "Gentle essentials for balanced skin.",
+            "cta_label": "Discover"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "kicker": "Sets",
+            "title": "The refined routine",
+            "text": "Curated pairings for easy conversion.",
+            "cta_label": "View sets"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
