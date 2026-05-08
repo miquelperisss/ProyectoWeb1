@@ -1,0 +1,1501 @@
+{% liquid
+  assign best_seller_blocks = section.blocks | where: 'type', 'best_seller'
+  assign concern_blocks = section.blocks | where: 'type', 'concern'
+  assign proof_blocks = section.blocks | where: 'type', 'proof'
+  assign review_blocks = section.blocks | where: 'type', 'review'
+  assign benefit_blocks = section.blocks | where: 'type', 'benefit'
+  assign faq_blocks = section.blocks | where: 'type', 'faq'
+%}
+
+<section
+  id="SkineaPremiumHome-{{ section.id }}"
+  class="skinea-home"
+  style="
+    --skinea-accent: {{ section.settings.accent_color }};
+    --skinea-accent-2: {{ section.settings.secondary_accent_color }};
+    --skinea-ink: {{ section.settings.text_color }};
+    --skinea-soft: {{ section.settings.soft_background }};
+  "
+>
+  <div class="skinea-home__hero">
+    <div class="skinea-home__hero-copy">
+      {% if section.settings.hero_eyebrow != blank %}
+        <p class="skinea-home__eyebrow">{{ section.settings.hero_eyebrow | escape }}</p>
+      {% endif %}
+
+      {% if section.settings.hero_heading != blank %}
+        <h1 class="skinea-home__heading">{{ section.settings.hero_heading }}</h1>
+      {% endif %}
+
+      {% if section.settings.hero_text != blank %}
+        <div class="skinea-home__hero-text">{{ section.settings.hero_text }}</div>
+      {% endif %}
+
+      <div class="skinea-home__actions">
+        {% if section.settings.primary_button_label != blank %}
+          <a class="skinea-home__button skinea-home__button--primary" href="{{ section.settings.primary_button_link | default: routes.all_products_collection_url }}">
+            {{ section.settings.primary_button_label | escape }}
+          </a>
+        {% endif %}
+
+        {% if section.settings.secondary_button_label != blank %}
+          <a class="skinea-home__button skinea-home__button--secondary" href="{{ section.settings.secondary_button_link | default: routes.all_products_collection_url }}">
+            {{ section.settings.secondary_button_label | escape }}
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="skinea-home__trust-row" aria-label="Brand trust points">
+        {% if section.settings.trust_point_1 != blank %}
+          <span>{{ section.settings.trust_point_1 | escape }}</span>
+        {% endif %}
+        {% if section.settings.trust_point_2 != blank %}
+          <span>{{ section.settings.trust_point_2 | escape }}</span>
+        {% endif %}
+        {% if section.settings.trust_point_3 != blank %}
+          <span>{{ section.settings.trust_point_3 | escape }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="skinea-home__hero-media">
+      {% if section.settings.hero_image != blank %}
+        {{
+          section.settings.hero_image
+          | image_url: width: 1600
+          | image_tag:
+            widths: '450, 650, 900, 1200, 1600',
+            sizes: '(min-width: 990px) 48vw, 92vw',
+            loading: 'eager',
+            class: 'skinea-home__hero-image'
+        }}
+      {% else %}
+        {{ 'product-apparel-1' | placeholder_svg_tag: 'skinea-home__placeholder' }}
+      {% endif %}
+
+      {% if section.settings.hero_badge != blank %}
+        <div class="skinea-home__hero-badge">{{ section.settings.hero_badge | escape }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if benefit_blocks.size > 0 %}
+    <div class="skinea-home__benefits" aria-label="Product benefits">
+      {% for block in benefit_blocks %}
+        <div class="skinea-home__benefit" {{ block.shopify_attributes }}>
+          {% if block.settings.icon != blank %}
+            <span class="skinea-home__benefit-icon" aria-hidden="true">{{ block.settings.icon | escape }}</span>
+          {% endif %}
+          <div>
+            {% if block.settings.title != blank %}
+              <h2>{{ block.settings.title | escape }}</h2>
+            {% endif %}
+            {% if block.settings.text != blank %}
+              <p>{{ block.settings.text | escape }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if best_seller_blocks.size > 0 %}
+    <div class="skinea-home__section-header">
+      {% if section.settings.best_sellers_eyebrow != blank %}
+        <p class="skinea-home__eyebrow">{{ section.settings.best_sellers_eyebrow | escape }}</p>
+      {% endif %}
+      {% if section.settings.best_sellers_heading != blank %}
+        <h2>{{ section.settings.best_sellers_heading | escape }}</h2>
+      {% endif %}
+      {% if section.settings.best_sellers_text != blank %}
+        <p>{{ section.settings.best_sellers_text | escape }}</p>
+      {% endif %}
+    </div>
+
+    <div class="skinea-home__product-grid">
+      {% for block in best_seller_blocks %}
+        {% liquid
+          assign card_product = block.settings.product
+          assign selected_variant = card_product.selected_or_first_available_variant
+        %}
+        <article class="skinea-home__product-card" {{ block.shopify_attributes }}>
+          <a class="skinea-home__product-media" href="{{ card_product.url | default: block.settings.fallback_link }}">
+            {% if block.settings.badge != blank %}
+              <span class="skinea-home__badge">{{ block.settings.badge | escape }}</span>
+            {% endif %}
+
+            {% if card_product.featured_image != blank %}
+              {{
+                card_product.featured_image
+                | image_url: width: 900
+                | image_tag:
+                  widths: '320, 480, 640, 900',
+                  sizes: '(min-width: 990px) 25vw, 80vw',
+                  loading: 'lazy'
+              }}
+            {% elsif block.settings.fallback_image != blank %}
+              {{
+                block.settings.fallback_image
+                | image_url: width: 900
+                | image_tag:
+                  widths: '320, 480, 640, 900',
+                  sizes: '(min-width: 990px) 25vw, 80vw',
+                  loading: 'lazy'
+              }}
+            {% else %}
+              {{ 'product-1' | placeholder_svg_tag: 'skinea-home__placeholder' }}
+            {% endif %}
+          </a>
+
+          <div class="skinea-home__product-content">
+            <div>
+              <p class="skinea-home__rating">{{ block.settings.rating_text | escape }}</p>
+              <h3>
+                <a href="{{ card_product.url | default: block.settings.fallback_link }}">
+                  {% if card_product.title != blank %}
+                    {{ card_product.title | escape }}
+                  {% else %}
+                    {{ block.settings.fallback_title | escape }}
+                  {% endif %}
+                </a>
+              </h3>
+              {% if block.settings.short_benefit != blank %}
+                <p>{{ block.settings.short_benefit | escape }}</p>
+              {% endif %}
+            </div>
+
+            <div class="skinea-home__product-footer">
+              <span class="skinea-home__price">
+                {% if card_product.price != blank %}
+                  {{ card_product.price | money }}
+                {% else %}
+                  {{ block.settings.fallback_price | escape }}
+                {% endif %}
+              </span>
+
+              {% if card_product != blank and selected_variant != blank %}
+                {% form 'product', card_product, class: 'skinea-home__quick-form' %}
+                  <input type="hidden" name="id" value="{{ selected_variant.id }}">
+                  <button type="submit" class="skinea-home__quick-add" {% unless selected_variant.available %}disabled{% endunless %}>
+                    {% if selected_variant.available %}
+                      {{ section.settings.quick_add_label | escape }}
+                    {% else %}
+                      {{ section.settings.sold_out_label | escape }}
+                    {% endif %}
+                  </button>
+                {% endform %}
+              {% elsif block.settings.fallback_link != blank %}
+                <a class="skinea-home__quick-add" href="{{ block.settings.fallback_link }}">{{ section.settings.shop_now_label | escape }}</a>
+              {% endif %}
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if concern_blocks.size > 0 %}
+    <div class="skinea-home__split-header">
+      <div>
+        {% if section.settings.concerns_eyebrow != blank %}
+          <p class="skinea-home__eyebrow">{{ section.settings.concerns_eyebrow | escape }}</p>
+        {% endif %}
+        {% if section.settings.concerns_heading != blank %}
+          <h2>{{ section.settings.concerns_heading | escape }}</h2>
+        {% endif %}
+      </div>
+      {% if section.settings.concerns_text != blank %}
+        <p>{{ section.settings.concerns_text | escape }}</p>
+      {% endif %}
+    </div>
+
+    <div class="skinea-home__concerns">
+      {% for block in concern_blocks %}
+        <a class="skinea-home__concern" href="{{ block.settings.link | default: routes.all_products_collection_url }}" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            {{
+              block.settings.image
+              | image_url: width: 700
+              | image_tag:
+                widths: '260, 420, 560, 700',
+                sizes: '(min-width: 990px) 20vw, 62vw',
+                loading: 'lazy'
+            }}
+          {% else %}
+            {{ 'collection-1' | placeholder_svg_tag: 'skinea-home__placeholder' }}
+          {% endif %}
+          <span>{{ block.settings.title | escape }}</span>
+          {% if block.settings.text != blank %}
+            <small>{{ block.settings.text | escape }}</small>
+          {% endif %}
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if proof_blocks.size > 0 %}
+    <div class="skinea-home__proof-wrap">
+      <div class="skinea-home__section-header">
+        {% if section.settings.proof_eyebrow != blank %}
+          <p class="skinea-home__eyebrow">{{ section.settings.proof_eyebrow | escape }}</p>
+        {% endif %}
+        {% if section.settings.proof_heading != blank %}
+          <h2>{{ section.settings.proof_heading | escape }}</h2>
+        {% endif %}
+        {% if section.settings.proof_text != blank %}
+          <p>{{ section.settings.proof_text | escape }}</p>
+        {% endif %}
+      </div>
+
+      <div class="skinea-home__proof-grid">
+        {% for block in proof_blocks %}
+          <article class="skinea-home__proof-card" {{ block.shopify_attributes }}>
+            <div class="skinea-home__proof-media">
+              {% if block.settings.image != blank %}
+                {{
+                  block.settings.image
+                  | image_url: width: 1000
+                  | image_tag:
+                    widths: '360, 520, 760, 1000',
+                    sizes: '(min-width: 990px) 32vw, 86vw',
+                    loading: 'lazy'
+                }}
+              {% else %}
+                {{ 'image' | placeholder_svg_tag: 'skinea-home__placeholder' }}
+              {% endif %}
+              <div class="skinea-home__proof-labels">
+                <span>{{ block.settings.before_label | escape }}</span>
+                <span>{{ block.settings.after_label | escape }}</span>
+              </div>
+            </div>
+            <div class="skinea-home__proof-content">
+              <h3>{{ block.settings.title | escape }}</h3>
+              {% if block.settings.text != blank %}
+                <p>{{ block.settings.text | escape }}</p>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if review_blocks.size > 0 %}
+    <div class="skinea-home__split-header">
+      <div>
+        {% if section.settings.reviews_eyebrow != blank %}
+          <p class="skinea-home__eyebrow">{{ section.settings.reviews_eyebrow | escape }}</p>
+        {% endif %}
+        {% if section.settings.reviews_heading != blank %}
+          <h2>{{ section.settings.reviews_heading | escape }}</h2>
+        {% endif %}
+      </div>
+      {% if section.settings.reviews_text != blank %}
+        <p>{{ section.settings.reviews_text | escape }}</p>
+      {% endif %}
+    </div>
+
+    <div class="skinea-home__reviews">
+      {% for block in review_blocks %}
+        <article class="skinea-home__review" {{ block.shopify_attributes }}>
+          <div class="skinea-home__review-media">
+            {% if block.settings.image != blank %}
+              {{
+                block.settings.image
+                | image_url: width: 700
+                | image_tag:
+                  widths: '260, 420, 560, 700',
+                  sizes: '(min-width: 990px) 25vw, 76vw',
+                  loading: 'lazy'
+              }}
+            {% else %}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'skinea-home__placeholder' }}
+            {% endif %}
+            {% if block.settings.platform_label != blank %}
+              <span>{{ block.settings.platform_label | escape }}</span>
+            {% endif %}
+          </div>
+          <div class="skinea-home__review-content">
+            <p class="skinea-home__rating">{{ block.settings.rating_text | escape }}</p>
+            {% if block.settings.quote != blank %}
+              <blockquote>{{ block.settings.quote | escape }}</blockquote>
+            {% endif %}
+            {% if block.settings.author != blank %}
+              <p>{{ block.settings.author | escape }}</p>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if faq_blocks.size > 0 %}
+    <div class="skinea-home__faq">
+      <div>
+        {% if section.settings.faq_eyebrow != blank %}
+          <p class="skinea-home__eyebrow">{{ section.settings.faq_eyebrow | escape }}</p>
+        {% endif %}
+        {% if section.settings.faq_heading != blank %}
+          <h2>{{ section.settings.faq_heading | escape }}</h2>
+        {% endif %}
+        {% if section.settings.faq_text != blank %}
+          <p>{{ section.settings.faq_text | escape }}</p>
+        {% endif %}
+      </div>
+      <div class="skinea-home__faq-list">
+        {% for block in faq_blocks %}
+          <details class="skinea-home__faq-item" {{ block.shopify_attributes }}>
+            <summary>{{ block.settings.question | escape }}</summary>
+            <div>{{ block.settings.answer }}</div>
+          </details>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+{% stylesheet %}
+  .skinea-home {
+    color: var(--skinea-ink);
+    background:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--skinea-accent) 16%, transparent), transparent 34rem),
+      linear-gradient(180deg, #fff 0%, color-mix(in srgb, var(--skinea-soft) 45%, #fff) 100%);
+    overflow: hidden;
+    padding: clamp(2.8rem, 7vw, 7rem) clamp(1.6rem, 5vw, 6.4rem);
+  }
+
+  .skinea-home * {
+    box-sizing: border-box;
+  }
+
+  .skinea-home a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .skinea-home__hero {
+    align-items: center;
+    display: grid;
+    gap: clamp(2.4rem, 6vw, 7rem);
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0 auto;
+    max-width: 132rem;
+  }
+
+  .skinea-home__hero-copy,
+  .skinea-home__section-header,
+  .skinea-home__split-header,
+  .skinea-home__faq {
+    animation: skinea-rise 700ms ease both;
+  }
+
+  .skinea-home__eyebrow {
+    color: color-mix(in srgb, var(--skinea-accent-2) 72%, var(--skinea-ink));
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    margin: 0 0 1.4rem;
+    text-transform: uppercase;
+  }
+
+  .skinea-home__heading,
+  .skinea-home h2 {
+    color: var(--skinea-ink);
+    font-family: var(--font-heading-family);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 0.96;
+    margin: 0;
+  }
+
+  .skinea-home__heading {
+    font-size: clamp(4.6rem, 10vw, 11.2rem);
+    max-width: 10ch;
+  }
+
+  .skinea-home h2 {
+    font-size: clamp(3.2rem, 5.6vw, 6.8rem);
+    max-width: 11ch;
+  }
+
+  .skinea-home__hero-text,
+  .skinea-home__section-header > p,
+  .skinea-home__split-header > p,
+  .skinea-home__faq > div > p {
+    color: color-mix(in srgb, var(--skinea-ink) 68%, #fff);
+    font-size: clamp(1.6rem, 1.7vw, 2rem);
+    line-height: 1.65;
+    max-width: 58rem;
+  }
+
+  .skinea-home__hero-text p {
+    margin: 1.8rem 0 0;
+  }
+
+  .skinea-home__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-top: 3rem;
+  }
+
+  .skinea-home__button,
+  .skinea-home__quick-add {
+    align-items: center;
+    border-radius: 999rem;
+    display: inline-flex;
+    font-size: 1.4rem;
+    font-weight: 700;
+    justify-content: center;
+    min-height: 4.8rem;
+    padding: 0 2.4rem;
+    transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+  }
+
+  .skinea-home__button:hover,
+  .skinea-home__quick-add:hover {
+    box-shadow: 0 1.6rem 4rem rgba(71, 42, 66, 0.14);
+    transform: translateY(-0.2rem);
+  }
+
+  .skinea-home__button--primary,
+  .skinea-home__quick-add {
+    background: linear-gradient(135deg, var(--skinea-accent), var(--skinea-accent-2));
+    border: 0;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .skinea-home__button--secondary {
+    background: rgba(255, 255, 255, 0.74);
+    border: 0.1rem solid rgba(71, 42, 66, 0.1);
+    color: var(--skinea-ink);
+  }
+
+  .skinea-home__trust-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 2.4rem;
+  }
+
+  .skinea-home__trust-row span {
+    backdrop-filter: blur(1.8rem);
+    background: rgba(255, 255, 255, 0.76);
+    border: 0.1rem solid rgba(71, 42, 66, 0.08);
+    border-radius: 999rem;
+    color: color-mix(in srgb, var(--skinea-ink) 72%, #fff);
+    font-size: 1.25rem;
+    padding: 0.8rem 1.2rem;
+  }
+
+  .skinea-home__hero-media {
+    background: linear-gradient(145deg, #fff, color-mix(in srgb, var(--skinea-soft) 72%, #fff));
+    border: 0.1rem solid rgba(71, 42, 66, 0.08);
+    border-radius: clamp(2.6rem, 5vw, 5.6rem);
+    box-shadow: 0 3rem 8rem rgba(71, 42, 66, 0.12);
+    min-height: clamp(42rem, 60vw, 70rem);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .skinea-home__hero-image,
+  .skinea-home__hero-media > svg,
+  .skinea-home__proof-media img,
+  .skinea-home__review-media img,
+  .skinea-home__concern img,
+  .skinea-home__product-media img {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  .skinea-home__hero-badge {
+    backdrop-filter: blur(1.8rem);
+    background: rgba(255, 255, 255, 0.76);
+    border: 0.1rem solid rgba(255, 255, 255, 0.7);
+    border-radius: 2rem;
+    bottom: 2rem;
+    box-shadow: 0 1.8rem 5rem rgba(71, 42, 66, 0.14);
+    font-size: 1.35rem;
+    font-weight: 700;
+    left: 2rem;
+    max-width: 23rem;
+    padding: 1.4rem 1.6rem;
+    position: absolute;
+  }
+
+  .skinea-home__benefits,
+  .skinea-home__product-grid,
+  .skinea-home__concerns,
+  .skinea-home__proof-grid,
+  .skinea-home__reviews {
+    margin: clamp(4rem, 8vw, 9rem) auto 0;
+    max-width: 132rem;
+  }
+
+  .skinea-home__benefits {
+    display: grid;
+    gap: 1.2rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .skinea-home__benefit {
+    align-items: flex-start;
+    background: rgba(255, 255, 255, 0.82);
+    border: 0.1rem solid rgba(71, 42, 66, 0.08);
+    border-radius: 2.2rem;
+    display: flex;
+    gap: 1.2rem;
+    padding: 1.6rem;
+  }
+
+  .skinea-home__benefit-icon {
+    align-items: center;
+    background: color-mix(in srgb, var(--skinea-accent) 14%, #fff);
+    border-radius: 999rem;
+    display: inline-flex;
+    flex: 0 0 4.2rem;
+    height: 4.2rem;
+    justify-content: center;
+  }
+
+  .skinea-home__benefit h2 {
+    font-family: var(--font-body-family);
+    font-size: 1.5rem;
+    letter-spacing: 0;
+    line-height: 1.2;
+  }
+
+  .skinea-home__benefit p,
+  .skinea-home__product-content p,
+  .skinea-home__concern small,
+  .skinea-home__proof-content p,
+  .skinea-home__review-content p,
+  .skinea-home__faq-item div {
+    color: color-mix(in srgb, var(--skinea-ink) 62%, #fff);
+    font-size: 1.38rem;
+    line-height: 1.55;
+    margin: 0.5rem 0 0;
+  }
+
+  .skinea-home__section-header {
+    margin: clamp(5.6rem, 10vw, 11rem) auto 0;
+    max-width: 132rem;
+    text-align: center;
+  }
+
+  .skinea-home__section-header h2 {
+    margin-inline: auto;
+  }
+
+  .skinea-home__section-header > p {
+    margin: 1.6rem auto 0;
+  }
+
+  .skinea-home__product-grid {
+    display: grid;
+    gap: 1.6rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .skinea-home__product-card,
+  .skinea-home__proof-card,
+  .skinea-home__review {
+    background: rgba(255, 255, 255, 0.88);
+    border: 0.1rem solid rgba(71, 42, 66, 0.08);
+    border-radius: 2.8rem;
+    box-shadow: 0 1.8rem 5rem rgba(71, 42, 66, 0.08);
+    overflow: hidden;
+    transition: transform 220ms ease, box-shadow 220ms ease;
+  }
+
+  .skinea-home__product-card:hover,
+  .skinea-home__proof-card:hover,
+  .skinea-home__review:hover,
+  .skinea-home__concern:hover {
+    box-shadow: 0 2.6rem 7rem rgba(71, 42, 66, 0.14);
+    transform: translateY(-0.4rem);
+  }
+
+  .skinea-home__product-media {
+    aspect-ratio: 1 / 1.08;
+    background: var(--skinea-soft);
+    display: block;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .skinea-home__badge {
+    background: #fff;
+    border-radius: 999rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    left: 1.4rem;
+    padding: 0.7rem 1.1rem;
+    position: absolute;
+    top: 1.4rem;
+    z-index: 1;
+  }
+
+  .skinea-home__product-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    min-height: 22rem;
+    padding: 1.8rem;
+  }
+
+  .skinea-home__rating {
+    color: color-mix(in srgb, var(--skinea-accent-2) 76%, var(--skinea-ink));
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    margin: 0 0 0.7rem;
+    text-transform: uppercase;
+  }
+
+  .skinea-home__product-content h3,
+  .skinea-home__proof-content h3 {
+    font-family: var(--font-heading-family);
+    font-size: clamp(2rem, 2.2vw, 2.8rem);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    margin: 0;
+  }
+
+  .skinea-home__product-footer {
+    align-items: center;
+    display: flex;
+    gap: 1.2rem;
+    justify-content: space-between;
+    margin-top: auto;
+  }
+
+  .skinea-home__price {
+    font-size: 1.6rem;
+    font-weight: 800;
+  }
+
+  .skinea-home__quick-form {
+    margin: 0;
+  }
+
+  .skinea-home__quick-add {
+    font-family: inherit;
+    min-height: 4.2rem;
+    padding: 0 1.6rem;
+  }
+
+  .skinea-home__quick-add:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .skinea-home__split-header,
+  .skinea-home__faq {
+    align-items: end;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr);
+    margin: clamp(5.6rem, 10vw, 11rem) auto 0;
+    max-width: 132rem;
+  }
+
+  .skinea-home__split-header > p {
+    margin: 0;
+  }
+
+  .skinea-home__concerns {
+    display: grid;
+    gap: 1.2rem;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(22rem, 1fr);
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    scroll-snap-type: x mandatory;
+  }
+
+  .skinea-home__concern {
+    aspect-ratio: 0.78;
+    background: var(--skinea-soft);
+    border-radius: 2.8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    padding: 1.6rem;
+    position: relative;
+    scroll-snap-align: start;
+    transition: transform 220ms ease, box-shadow 220ms ease;
+  }
+
+  .skinea-home__concern::after {
+    background: linear-gradient(180deg, transparent, rgba(37, 24, 36, 0.72));
+    content: "";
+    inset: 0;
+    position: absolute;
+  }
+
+  .skinea-home__concern img,
+  .skinea-home__concern svg {
+    inset: 0;
+    position: absolute;
+  }
+
+  .skinea-home__concern span,
+  .skinea-home__concern small {
+    color: #fff;
+    position: relative;
+    z-index: 1;
+  }
+
+  .skinea-home__concern span {
+    font-family: var(--font-heading-family);
+    font-size: 2.4rem;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .skinea-home__proof-wrap {
+    background: rgba(255, 255, 255, 0.58);
+    border: 0.1rem solid rgba(71, 42, 66, 0.06);
+    border-radius: clamp(2.8rem, 5vw, 5.6rem);
+    margin: clamp(5.6rem, 10vw, 11rem) auto 0;
+    max-width: 142rem;
+    padding: clamp(0.1rem, 2vw, 1.6rem) clamp(0.1rem, 2vw, 1.6rem) clamp(2rem, 4vw, 4rem);
+  }
+
+  .skinea-home__proof-wrap .skinea-home__section-header {
+    margin-top: clamp(3rem, 5vw, 6rem);
+  }
+
+  .skinea-home__proof-grid {
+    display: grid;
+    gap: 1.6rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .skinea-home__proof-media,
+  .skinea-home__review-media {
+    aspect-ratio: 1 / 1.1;
+    background: var(--skinea-soft);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .skinea-home__proof-labels {
+    bottom: 1.4rem;
+    display: flex;
+    gap: 0.8rem;
+    left: 1.4rem;
+    position: absolute;
+    right: 1.4rem;
+  }
+
+  .skinea-home__proof-labels span,
+  .skinea-home__review-media span {
+    backdrop-filter: blur(1.2rem);
+    background: rgba(255, 255, 255, 0.78);
+    border-radius: 999rem;
+    flex: 1;
+    font-size: 1.15rem;
+    font-weight: 800;
+    padding: 0.8rem 1rem;
+    text-align: center;
+  }
+
+  .skinea-home__proof-content,
+  .skinea-home__review-content {
+    padding: 1.8rem;
+  }
+
+  .skinea-home__reviews {
+    display: grid;
+    gap: 1.6rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .skinea-home__review-media span {
+    bottom: 1.4rem;
+    left: 1.4rem;
+    position: absolute;
+    width: auto;
+  }
+
+  .skinea-home__review-content blockquote {
+    font-family: var(--font-heading-family);
+    font-size: clamp(2rem, 2.2vw, 2.8rem);
+    letter-spacing: -0.035em;
+    line-height: 1.18;
+    margin: 0;
+  }
+
+  .skinea-home__faq {
+    align-items: start;
+  }
+
+  .skinea-home__faq-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .skinea-home__faq-item {
+    background: rgba(255, 255, 255, 0.82);
+    border: 0.1rem solid rgba(71, 42, 66, 0.08);
+    border-radius: 1.8rem;
+    padding: 0.4rem 1.6rem;
+  }
+
+  .skinea-home__faq-item summary {
+    cursor: pointer;
+    font-size: 1.55rem;
+    font-weight: 800;
+    list-style: none;
+    padding: 1.4rem 0;
+  }
+
+  .skinea-home__faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .skinea-home__faq-item div {
+    padding-bottom: 1.5rem;
+  }
+
+  .skinea-home__placeholder {
+    background: color-mix(in srgb, var(--skinea-soft) 82%, #fff);
+    fill: color-mix(in srgb, var(--skinea-accent) 44%, #fff);
+  }
+
+  @keyframes skinea-rise {
+    from {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .skinea-home__benefits,
+    .skinea-home__product-grid,
+    .skinea-home__proof-grid,
+    .skinea-home__reviews {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .skinea-home__split-header,
+    .skinea-home__faq {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .skinea-home__hero {
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    }
+
+    .skinea-home__benefits {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .skinea-home__product-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .skinea-home {
+      padding-inline: 1.4rem;
+    }
+
+    .skinea-home__actions,
+    .skinea-home__button {
+      width: 100%;
+    }
+
+    .skinea-home__benefits {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .skinea-home__product-grid {
+      display: flex;
+      gap: 1.2rem;
+      margin-inline: -1.4rem;
+      overflow-x: auto;
+      padding-inline: 1.4rem;
+      scroll-snap-type: x mandatory;
+    }
+
+    .skinea-home__product-card {
+      flex: 0 0 82vw;
+      scroll-snap-align: start;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Skinea premium home",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand colors"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Pink accent",
+      "default": "#f0a8c8"
+    },
+    {
+      "type": "color",
+      "id": "secondary_accent_color",
+      "label": "Purple accent",
+      "default": "#9a78ff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#251824"
+    },
+    {
+      "type": "color",
+      "id": "soft_background",
+      "label": "Soft background",
+      "default": "#fff4fa"
+    },
+    {
+      "type": "header",
+      "content": "Hero"
+    },
+    {
+      "type": "text",
+      "id": "hero_eyebrow",
+      "label": "Eyebrow",
+      "default": "Skincare technology for your glow rituals"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "hero_heading",
+      "label": "Heading",
+      "default": "Lift your ritual. Reveal your glow."
+    },
+    {
+      "type": "richtext",
+      "id": "hero_text",
+      "label": "Text",
+      "default": "<p>Skinea creates elevated beauty technology for sculpted, refreshed, camera-ready skin from the comfort of home.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero image"
+    },
+    {
+      "type": "text",
+      "id": "hero_badge",
+      "label": "Floating badge",
+      "default": "Clinical-looking tools, spa-inspired results, made for daily self-care."
+    },
+    {
+      "type": "text",
+      "id": "primary_button_label",
+      "label": "Primary button label",
+      "default": "Shop best sellers"
+    },
+    {
+      "type": "url",
+      "id": "primary_button_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_label",
+      "label": "Secondary button label",
+      "default": "Explore rituals"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "text",
+      "id": "trust_point_1",
+      "label": "Trust point 1",
+      "default": "Free tracked delivery"
+    },
+    {
+      "type": "text",
+      "id": "trust_point_2",
+      "label": "Trust point 2",
+      "default": "30-day glow guarantee"
+    },
+    {
+      "type": "text",
+      "id": "trust_point_3",
+      "label": "Trust point 3",
+      "default": "Loved by beauty creators"
+    },
+    {
+      "type": "header",
+      "content": "Best sellers"
+    },
+    {
+      "type": "text",
+      "id": "best_sellers_eyebrow",
+      "label": "Eyebrow",
+      "default": "Best sellers"
+    },
+    {
+      "type": "text",
+      "id": "best_sellers_heading",
+      "label": "Heading",
+      "default": "Results-led beauty technology"
+    },
+    {
+      "type": "textarea",
+      "id": "best_sellers_text",
+      "label": "Text",
+      "default": "Premium tools for sculpting, de-puffing, glow, recovery and calm skin days."
+    },
+    {
+      "type": "text",
+      "id": "quick_add_label",
+      "label": "Quick add label",
+      "default": "Add to bag"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_label",
+      "label": "Sold out label",
+      "default": "Sold out"
+    },
+    {
+      "type": "text",
+      "id": "shop_now_label",
+      "label": "Fallback product button label",
+      "default": "Shop now"
+    },
+    {
+      "type": "header",
+      "content": "Shop by concern"
+    },
+    {
+      "type": "text",
+      "id": "concerns_eyebrow",
+      "label": "Eyebrow",
+      "default": "Shop by concern"
+    },
+    {
+      "type": "text",
+      "id": "concerns_heading",
+      "label": "Heading",
+      "default": "Choose your skin goal"
+    },
+    {
+      "type": "textarea",
+      "id": "concerns_text",
+      "label": "Text",
+      "default": "Guide visitors into the right ritual with clear benefit-led pathways."
+    },
+    {
+      "type": "header",
+      "content": "Before and after"
+    },
+    {
+      "type": "text",
+      "id": "proof_eyebrow",
+      "label": "Eyebrow",
+      "default": "Visible rituals"
+    },
+    {
+      "type": "text",
+      "id": "proof_heading",
+      "label": "Heading",
+      "default": "Designed around real results"
+    },
+    {
+      "type": "textarea",
+      "id": "proof_text",
+      "label": "Text",
+      "default": "Use before-and-after imagery, routine notes and benefit claims that feel credible, premium and easy to understand."
+    },
+    {
+      "type": "header",
+      "content": "Reviews"
+    },
+    {
+      "type": "text",
+      "id": "reviews_eyebrow",
+      "label": "Eyebrow",
+      "default": "Seen on TikTok"
+    },
+    {
+      "type": "text",
+      "id": "reviews_heading",
+      "label": "Heading",
+      "default": "Creator-loved glow rituals"
+    },
+    {
+      "type": "textarea",
+      "id": "reviews_text",
+      "label": "Text",
+      "default": "Pair social proof with short, visual reviews so the store feels active, trusted and worth exploring."
+    },
+    {
+      "type": "header",
+      "content": "FAQ"
+    },
+    {
+      "type": "text",
+      "id": "faq_eyebrow",
+      "label": "Eyebrow",
+      "default": "Good to know"
+    },
+    {
+      "type": "text",
+      "id": "faq_heading",
+      "label": "Heading",
+      "default": "Premium answers, clear confidence"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_text",
+      "label": "Text",
+      "default": "Answer safety, shipping, results and routine questions before customers hesitate."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit icon",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon",
+          "default": "01"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Spa-level ritual"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Elevated tools that make daily self-care feel intentional."
+        }
+      ]
+    },
+    {
+      "type": "best_seller",
+      "name": "Best seller product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "image_picker",
+          "id": "fallback_image",
+          "label": "Fallback image"
+        },
+        {
+          "type": "text",
+          "id": "fallback_title",
+          "label": "Fallback title",
+          "default": "Skinea sculpting device"
+        },
+        {
+          "type": "text",
+          "id": "fallback_price",
+          "label": "Fallback price",
+          "default": "$89"
+        },
+        {
+          "type": "url",
+          "id": "fallback_link",
+          "label": "Fallback link"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge",
+          "default": "Best seller"
+        },
+        {
+          "type": "text",
+          "id": "rating_text",
+          "label": "Rating text",
+          "default": "5/5 rating"
+        },
+        {
+          "type": "textarea",
+          "id": "short_benefit",
+          "label": "Short benefit",
+          "default": "For lifted-looking contours and a polished glow."
+        }
+      ]
+    },
+    {
+      "type": "concern",
+      "name": "Concern card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Puffiness"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Cooling tools for refreshed mornings."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    },
+    {
+      "type": "proof",
+      "name": "Before and after",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "before_label",
+          "label": "Before label",
+          "default": "Before"
+        },
+        {
+          "type": "text",
+          "id": "after_label",
+          "label": "After label",
+          "default": "After ritual"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Sculpted, refreshed, radiant"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Showcase realistic transformation photography and routine details."
+        }
+      ]
+    },
+    {
+      "type": "review",
+      "name": "UGC review",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "platform_label",
+          "label": "Platform label",
+          "default": "TikTok review"
+        },
+        {
+          "type": "text",
+          "id": "rating_text",
+          "label": "Rating text",
+          "default": "5/5 rating"
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "My skin looks instantly more awake. It feels like a tiny facial at home."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author",
+          "default": "@skinea_glow"
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How quickly will I see results?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Many customers use Skinea tools for an immediately refreshed look, with best results from consistent use as part of a skincare routine.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Skinea premium home",
+      "blocks": [
+        {
+          "type": "benefit"
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "02",
+            "title": "Beauty-tech focused",
+            "text": "Position products as innovative skincare companions."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "03",
+            "title": "Social proof ready",
+            "text": "Built for reviews, creator content and trust cues."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "04",
+            "title": "Soft luxury feel",
+            "text": "Minimal, feminine, modern and conversion-led."
+          }
+        },
+        {
+          "type": "best_seller"
+        },
+        {
+          "type": "best_seller",
+          "settings": {
+            "badge": "Glow essential",
+            "fallback_title": "Skinea LED glow wand",
+            "short_benefit": "For radiant-looking skin and a spa-night finish."
+          }
+        },
+        {
+          "type": "best_seller",
+          "settings": {
+            "badge": "Creator pick",
+            "fallback_title": "Skinea cooling depuffer",
+            "short_benefit": "For refreshed eyes and calm morning skin."
+          }
+        },
+        {
+          "type": "best_seller",
+          "settings": {
+            "badge": "Routine hero",
+            "fallback_title": "Skinea recovery roller",
+            "short_benefit": "For post-mask massage and dewy recovery."
+          }
+        },
+        {
+          "type": "concern"
+        },
+        {
+          "type": "concern",
+          "settings": {
+            "title": "Sculpting",
+            "text": "Define the look of cheekbones and jawline."
+          }
+        },
+        {
+          "type": "concern",
+          "settings": {
+            "title": "Anti-aging",
+            "text": "Support smoother-looking, cared-for skin."
+          }
+        },
+        {
+          "type": "concern",
+          "settings": {
+            "title": "Glow",
+            "text": "Create a radiant skin prep ritual."
+          }
+        },
+        {
+          "type": "concern",
+          "settings": {
+            "title": "Recovery",
+            "text": "Calm, cool and reset your routine."
+          }
+        },
+        {
+          "type": "proof"
+        },
+        {
+          "type": "proof",
+          "settings": {
+            "title": "Brighter-looking glow",
+            "text": "Add real customer routines and honest visual proof."
+          }
+        },
+        {
+          "type": "review"
+        },
+        {
+          "type": "review",
+          "settings": {
+            "author": "@morningglow",
+            "quote": "It makes my skincare shelf feel so much more elevated."
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "author": "@facialnight",
+            "quote": "The perfect pre-makeup step when I want a lifted glow."
+          }
+        },
+        {
+          "type": "faq"
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Are the images and buttons editable?",
+            "answer": "<p>Yes. Every image, label, link, review, FAQ and product card can be edited in the Shopify Theme Editor.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
