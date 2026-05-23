@@ -449,7 +449,7 @@ footer .logo { font-size: 18px; }
 }
 
 @media (max-width: 480px) {
-  .packs { grid-template-columns: 1fr; }
+  .packs { grid-template-columns: 1fr 1fr; }
   .proof-bar { flex-direction: column; gap: 12px; }
   .proof-divider { display: none; }
 }
