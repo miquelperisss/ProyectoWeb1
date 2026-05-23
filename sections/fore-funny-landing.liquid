@@ -34,11 +34,11 @@
     </div>
 
     <div class="hero-image">
-      <img src="{{ product.featured_image | image_url: width: 1200 }}"
+      <img class="hero-product-img"
+           src="{{ product.featured_image | image_url: width: 1200 }}"
            alt="{{ product.title }}"
            width="1200"
-           height="1200"
-           style="width:100%; height:100%; object-fit:cover; opacity:0.85;">
+           height="1200">
     </div>
   </section>
 
@@ -96,13 +96,30 @@
           <p class="pack-label">Choose your pack</p>
           <div class="packs">
             {% for variant in product.variants %}
+              {% liquid
+                assign pack_size = variant.title | remove: '×' | remove: 'x' | remove: 'X' | remove: 'tees' | remove: 'Tee' | remove: 'Tees' | strip
+                assign pack_before = '$8.00'
+                assign pack_save = 'Save 33%'
+                if pack_size contains '500'
+                  assign pack_before = '$320.00'
+                  assign pack_save = 'Save 38%'
+                elsif pack_size contains '100'
+                  assign pack_before = '$70.00'
+                  assign pack_save = 'Save 33%'
+                elsif pack_size contains '50'
+                  assign pack_before = '$38.00'
+                  assign pack_save = 'Save 32%'
+                endif
+              %}
               <div class="pack-option {% if forloop.index == 2 %}selected{% endif %}"
                    data-variant-id="{{ variant.id }}"
                    data-price="{{ variant.price | money }}"
                    onclick="selectVariant(this)">
                 {% if forloop.index == 2 %}<div class="pack-popular">Most Popular</div>{% endif %}
-                <div class="pack-qty">{{ variant.title }}</div>
+                <div class="pack-qty">× {{ pack_size }} tees</div>
+                <div class="pack-before" style="font-size:12px; color:#888; text-decoration:line-through; margin-top:4px;">{{ pack_before }}</div>
                 <div class="pack-price">{{ variant.price | money }}</div>
+                <div class="pack-save" style="font-size:11px; color:#2d6b4a; font-weight:500; margin-top:2px;">{{ pack_save }}</div>
               </div>
             {% endfor %}
           </div>
@@ -118,6 +135,10 @@
               Add to Cart — {{ product.selected_or_first_available_variant.price | money }} AUD
             {% endif %}
           </button>
+          <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; font-size:13px; color:#888;">
+            <span style="display:inline-block; width:8px; height:8px; background:#e85d75; border-radius:50%; animation: pulse 1.5s infinite;"></span>
+            <span id="viewerCount">23 people are viewing this right now</span>
+          </div>
         {% endform %}
 
         <div class="trust-row">
@@ -135,17 +156,17 @@
       <div class="section-title">Seriously good.<br><em>Seriously funny.</em></div>
       <div class="features-grid">
         <div class="feature-card">
-          <div class="feature-icon">🏌️</div>
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
           <div class="feature-title">Perfect 3-inch height</div>
           <p class="feature-text">The ideal height for drivers and woods. Consistent ball position, consistent swing. The ladies hold it steady — every time.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">💪</div>
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
           <div class="feature-title">Durable plastic</div>
           <p class="feature-text">High-quality plastic that survives swing after swing. Lightweight, flexible, won't snap on impact. Outlasts cheap wooden tees by miles.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">🎨</div>
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M12 2v20"/></svg></div>
           <div class="feature-title">5 vibrant colors</div>
           <p class="feature-text">Easy to spot in the grass. Each pack comes with a mix of colors so you'll always find your tee — and so will everyone on the fairway.</p>
         </div>
@@ -169,80 +190,20 @@
         <button class="btn-primary" type="button" onclick="document.getElementById('product').scrollIntoView({behavior:'smooth'})">Shop Gift Packs →</button>
       </div>
       <div class="gift-visual">
-        <img src="{{ product.images[2] | image_url: width: 600 }}"
-             alt="Gift presentation"
-             width="600"
-             height="600"
-             style="width:100%; height:100%; object-fit:cover;">
+        <img
+          src="{{ product.images[2] | image_url: width: 800 }}"
+          alt="Gift presentation"
+          width="800"
+          height="800"
+          style="width:100%; height:100%; object-fit:cover; display:block;">
       </div>
     </div>
   </section>
 
-  <section class="reviews-section fade-in">
-    <div style="max-width:1100px; margin:0 auto;">
-      <div class="reviews-header">
-        <div>
-          <div class="section-eyebrow">Customer reviews</div>
-          <div class="section-title">They laughed.<br>Then they bought more.</div>
-        </div>
-        <div class="reviews-score">
-          <div class="big-score">{{ rating }}</div>
-          <div class="score-stars">★★★★★</div>
-          <div class="score-count">Based on {{ review_count }} reviews</div>
-        </div>
-      </div>
-      <div class="reviews-grid">
-        <div class="review-card">
-          <div class="review-header">
-            <div class="review-avatar rv-a">MR</div>
-            <div>
-              <div class="review-author">Mike R.</div>
-              <div class="review-meta">Sydney, Australia · Verified Purchase</div>
-            </div>
-          </div>
-          <div class="review-stars">★★★★★</div>
-          <p class="review-text">"Bought these as a gag gift for my mate's 50th. He loved them so much he actually uses them every round now. Bought another pack for myself."</p>
-          <span class="review-badge">Pack × 100</span>
-        </div>
-        <div class="review-card">
-          <div class="review-header">
-            <div class="review-avatar rv-b">JT</div>
-            <div>
-              <div class="review-author">James T.</div>
-              <div class="review-meta">Melbourne, Australia · Verified Purchase</div>
-            </div>
-          </div>
-          <div class="review-stars">★★★★★</div>
-          <p class="review-text">"Used these at our corporate golf day and they were the talk of the course. Everyone was asking where to get them. Great quality too — none broke."</p>
-          <span class="review-badge">Pack × 500</span>
-        </div>
-        <div class="review-card">
-          <div class="review-header">
-            <div class="review-avatar rv-c">SB</div>
-            <div>
-              <div class="review-author">Steve B.</div>
-              <div class="review-meta">Brisbane, Australia · Verified Purchase</div>
-            </div>
-          </div>
-          <div class="review-stars">★★★★★</div>
-          <p class="review-text">"Perfect bachelor party favor. Ordered 50 for the weekend and they were a huge hit. Shipped fast, packed well. Already ordered again for Christmas gifts."</p>
-          <span class="review-badge">Pack × 50</span>
-        </div>
-        <div class="review-card">
-          <div class="review-header">
-            <div class="review-avatar rv-d">DL</div>
-            <div>
-              <div class="review-author">Dave L.</div>
-              <div class="review-meta">Perth, Australia · Verified Purchase</div>
-            </div>
-          </div>
-          <div class="review-stars">★★★★★</div>
-          <p class="review-text">"My golf buddy spotted one on the 1st tee and hasn't stopped talking about it. Functional, funny, and a great conversation starter. 10/10 would recommend."</p>
-          <span class="review-badge">Pack × 10</span>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- Reviews section - will be replaced by Judge.me app widget -->
+  <div id="judgeme_product_reviews" style="padding: 60px; text-align:center; color:#888; font-size:14px;">
+    Reviews loading...
+  </div>
 
   <section class="faq-section fade-in">
     <div class="faq-inner">

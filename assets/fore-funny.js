@@ -23,6 +23,7 @@ function formatForeFunnyMoney(cents) {
 
 function getSelectedVariant() {
   const selectedOption = document.querySelector('.pack-option.selected');
+
   const variantId = selectedOption ? selectedOption.dataset.variantId : null;
   const data = getForeFunnyData();
   return data.variants.find((variant) => String(variant.id) === String(variantId)) || null;
@@ -166,6 +167,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const productSection = document.getElementById('product');
   const stickyButton = document.querySelector('.sticky-atc-btn');
   const selectedOption = document.querySelector('.pack-option.selected');
+
+  const count = Math.floor(Math.random() * 15) + 18;
+  const el = document.getElementById('viewerCount');
+  if (el) el.textContent = count + ' people are viewing this right now';
 
   if (selectedOption) {
     selectVariant(selectedOption);
