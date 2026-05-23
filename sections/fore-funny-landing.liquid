@@ -201,9 +201,7 @@
   </section>
 
   <!-- Reviews section - will be replaced by Judge.me app widget -->
-  <div id="judgeme_product_reviews" style="padding: 60px; text-align:center; color:#888; font-size:14px;">
-    Reviews loading...
-  </div>
+  {% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
 
   <section class="faq-section fade-in">
     <div class="faq-inner">
