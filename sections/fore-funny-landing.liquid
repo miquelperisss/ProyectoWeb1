@@ -40,11 +40,8 @@
     <div class="hero-image">
       <div class="hero-image-bg"></div>
       <div class="hero-product-showcase">
-        <div class="tee-grid">
-          <div class="tee-figure tee-c1"><div class="tee-head"></div><div class="tee-body"></div></div>
-          <div class="tee-figure tee-c2"><div class="tee-head"></div><div class="tee-body"></div></div>
-          <div class="tee-figure tee-c3"><div class="tee-head"></div><div class="tee-body"></div></div>
-          <div class="tee-figure tee-c4"><div class="tee-head"></div><div class="tee-body"></div></div>
+        <div style="width:100%; max-width:480px; margin:0 auto;">
+          {{ section.settings.product.featured_image | image_url: width: 800 | image_tag: class: 'hero-product-img', alt: section.settings.product.title }}
         </div>
         <div class="hero-proof">
           <div class="hero-proof-item"><div class="hero-proof-num">{{ sold_count }}</div><div class="hero-proof-label">Sold</div></div>
