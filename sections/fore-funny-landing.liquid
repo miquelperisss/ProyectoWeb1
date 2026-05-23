@@ -1,12 +1,8 @@
+{% assign product = section.settings.product %}
 {{ 'fore-funny.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'fore-funny.js' | asset_url }}" defer="defer"></script>
 
 {% liquid
-  assign landing_product = section.settings.product
-  if landing_product == blank and product != blank
-    assign landing_product = product
-  endif
-
   assign hero_headline = settings.fore_funny_hero_headline | default: 'The only tee that makes you smile <em>before</em> your swing.'
   assign hero_subheadline = settings.fore_funny_hero_subheadline | default: "Premium plastic golf tees with a twist. 3-inch height, perfect balance, and a design that'll get a laugh on any course."
   assign sold_count = settings.fore_funny_sold_count | default: '12K+'
@@ -17,7 +13,7 @@
 
 <div data-fore-funny-section="{{ section.id }}">
   <div class="sticky-atc" id="stickyAtc">
-    <div class="sticky-atc-text">Fore & Funny™ Golf Tees — <strong>Pack ×50 desde $26.00 AUD</strong></div>
+    <div class="sticky-atc-text">Fore & Funny™ Golf Tees — <strong>Pack ×50 desde {{ product.price_min | money }} AUD</strong></div>
     <button class="sticky-atc-btn" type="button">Add to Cart</button>
   </div>
 
@@ -41,7 +37,11 @@
       <div class="hero-image-bg"></div>
       <div class="hero-product-showcase">
         <div style="width:100%; max-width:480px; margin:0 auto;">
-          {{ section.settings.product.featured_image | image_url: width: 800 | image_tag: class: 'hero-product-img', alt: section.settings.product.title }}
+          <img src="{{ product.featured_image | image_url: width: 800 }}"
+               alt="{{ product.title }}"
+               width="800"
+               height="800"
+               style="width:100%; max-width:480px; height:auto; object-fit:contain; filter:drop-shadow(0 20px 40px rgba(0,0,0,0.4));">
         </div>
         <div class="hero-proof">
           <div class="hero-proof-item"><div class="hero-proof-num">{{ sold_count }}</div><div class="hero-proof-label">Sold</div></div>
@@ -67,21 +67,24 @@
       <div class="product-gallery fade-in">
         <div class="main-image">
           <div class="main-image-inner">
-            <div class="product-tees-display">
-              <div class="ptee ptee-1"><div class="ptee-head"></div><div class="ptee-body"></div></div>
-              <div class="ptee ptee-2" style="margin-bottom:20px;"><div class="ptee-head"></div><div class="ptee-body"></div></div>
-              <div class="ptee ptee-3"><div class="ptee-head"></div><div class="ptee-body"></div></div>
-              <div class="ptee ptee-4" style="margin-bottom:10px;"><div class="ptee-head"></div><div class="ptee-body"></div></div>
-              <div class="ptee ptee-5"><div class="ptee-head"></div><div class="ptee-body"></div></div>
-            </div>
+            <img src="{{ product.featured_image | image_url: width: 1000 }}"
+                 alt="{{ product.title }}"
+                 width="1000"
+                 height="1000"
+                 style="width:100%; height:100%; object-fit:contain;">
           </div>
           <div class="image-badge">Multicolor Pack</div>
         </div>
         <div class="thumbnails">
-          <div class="thumb active"><div class="thumb-inner"></div></div>
-          <div class="thumb"><div class="thumb-inner"></div></div>
-          <div class="thumb"><div class="thumb-inner"></div></div>
-          <div class="thumb"><div class="thumb-inner"></div></div>
+          {% for image in product.images limit:4 %}
+            <div class="thumb {% if forloop.first %}active{% endif %}">
+              <img src="{{ image | image_url: width: 200 }}"
+                   alt="{{ product.title }}"
+                   width="200"
+                   height="200"
+                   style="width:100%; height:100%; object-fit:cover;">
+            </div>
+          {% endfor %}
         </div>
       </div>
 
@@ -90,10 +93,36 @@
           <span class="s">★★★★★</span>
           <span>{{ rating }} · {{ review_count }} reviews</span>
         </div>
-        <h2 class="product-name">{% if landing_product != blank %}{{ landing_product.title }}{% else %}Bikini Lady Golf Tees{% endif %}</h2>
+        <h2 class="product-name">{{ product.title }}</h2>
         <p class="product-tagline">Plastic · 3-inch · Multicolor · Pack of your choice</p>
 
-        {% render 'fore-funny-product-form', product: landing_product %}
+        <script type="application/json" id="ForeFunnyProductData">
+          {
+            "variants": {% if product != blank %}{{ product.variants | json }}{% else %}[]{% endif %}
+          }
+        </script>
+
+        {% form 'product', product %}
+          <p class="pack-label">Choose your pack</p>
+          <div class="packs">
+            {% for variant in product.variants %}
+              <div class="pack-option {% if forloop.index == 2 %}selected{% endif %}"
+                   data-variant-id="{{ variant.id }}"
+                   data-price="{{ variant.price | money }}"
+                   onclick="selectVariant(this)">
+                {% if forloop.index == 2 %}<div class="pack-popular">Most Popular</div>{% endif %}
+                <div class="pack-qty">{{ variant.title }}</div>
+                <div class="pack-price">{{ variant.price | money }}</div>
+              </div>
+            {% endfor %}
+          </div>
+          <select class="fore-funny-variant-select" name="id" style="display:none">
+            {% for variant in product.variants %}
+              <option value="{{ variant.id }}" {% if forloop.index == 2 %}selected="selected"{% endif %}>{{ variant.title }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="atc-btn" id="mainAtc">Add to Cart — {{ product.price_min | money }} AUD</button>
+        {% endform %}
 
         <div class="trust-row">
           <div class="trust-item"><span class="trust-icon">🔒</span> Secure checkout</div>

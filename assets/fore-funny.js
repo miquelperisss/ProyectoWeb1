@@ -28,21 +28,30 @@ function getSelectedVariant() {
   return data.variants.find((variant) => String(variant.id) === String(variantId)) || null;
 }
 
-function updateForeFunnyButtons(variant, pack) {
-  const price = variant ? formatForeFunnyMoney(variant.price) : `$${packPrices[pack].toFixed(2)} AUD`;
+function getSelectedPackLabel() {
+  const selectedOption = document.querySelector('.pack-option.selected');
+  const packQty = selectedOption ? selectedOption.querySelector('.pack-qty') : null;
+  return packQty ? packQty.textContent.trim() : `×${selectedPack}`;
+}
+
+function updateForeFunnyButtons(variant) {
+  const selectedOption = document.querySelector('.pack-option.selected');
+  const fallbackPrice = selectedOption && selectedOption.dataset.price ? `${selectedOption.dataset.price} AUD` : '$26.00 AUD';
+  const price = variant ? formatForeFunnyMoney(variant.price) : fallbackPrice;
+  const packLabel = getSelectedPackLabel();
   const mainAtc = document.getElementById('mainAtc');
   const stickyText = document.querySelector('.sticky-atc-text');
   const variantSelect = document.querySelector('.fore-funny-variant-select');
   const stickyButton = document.querySelector('.sticky-atc-btn');
 
   if (mainAtc) {
-    mainAtc.textContent = `🛒 Add to Cart — ${price}`;
+    mainAtc.textContent = `Add to Cart — ${price}`;
     mainAtc.disabled = Boolean(variant && !variant.available);
     if (variant && !variant.available) mainAtc.textContent = `Sold Out — ${price}`;
   }
 
   if (stickyText) {
-    stickyText.innerHTML = `Fore & Funny™ Golf Tees — <strong>Pack ×${pack} desde ${price}</strong>`;
+    stickyText.innerHTML = `Fore & Funny™ Golf Tees — <strong>Pack ${packLabel} desde ${price}</strong>`;
   }
 
   if (variantSelect && variant) {
@@ -56,12 +65,20 @@ function updateForeFunnyButtons(variant, pack) {
   }
 }
 
-function selectPack(el) {
+function selectVariant(el) {
   document.querySelectorAll('.pack-option').forEach(p => p.classList.remove('selected'));
   el.classList.add('selected');
-  selectedPack = parseInt(el.dataset.pack, 10);
-  const variant = getSelectedVariant();
-  updateForeFunnyButtons(variant, selectedPack);
+  const variantSelect = document.querySelector('.fore-funny-variant-select');
+  if (variantSelect && el.dataset.variantId) {
+    variantSelect.value = el.dataset.variantId;
+  }
+  const packNumber = getPackFromTitle(getSelectedPackLabel());
+  if (packNumber) selectedPack = packNumber;
+  updateForeFunnyButtons(getSelectedVariant());
+}
+
+function selectPack(el) {
+  selectVariant(el);
 }
 
 function toggleFaq(btn) {
@@ -129,8 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectedOption = document.querySelector('.pack-option.selected');
 
   if (selectedOption) {
-    selectedPack = parseInt(selectedOption.dataset.pack, 10);
-    updateForeFunnyButtons(getSelectedVariant(), selectedPack);
+    selectVariant(selectedOption);
   }
 
   if (stickyButton) {
@@ -152,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (productSection) {
     productSection.addEventListener('submit', (event) => {
       const form = event.target;
-      if (!form.matches('.fore-funny-product-form')) return;
+      if (!form.matches('form[action*="/cart/add"]')) return;
       const variant = getSelectedVariant();
       if (!variant || variant.available) return;
       event.preventDefault();
