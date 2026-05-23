@@ -46,8 +46,7 @@ function updateForeFunnyButtons(variant) {
 
   if (mainAtc) {
     mainAtc.textContent = `Add to Cart — ${price}`;
-    mainAtc.disabled = Boolean(variant && !variant.available);
-    if (variant && !variant.available) mainAtc.textContent = `Sold Out — ${price}`;
+    mainAtc.disabled = false;
   }
 
   if (stickyText) {
@@ -60,21 +59,34 @@ function updateForeFunnyButtons(variant) {
   }
 
   if (stickyButton) {
-    stickyButton.disabled = Boolean(variant && !variant.available);
-    stickyButton.textContent = variant && !variant.available ? 'Sold Out' : 'Add to Cart';
+    stickyButton.disabled = false;
+    stickyButton.textContent = 'Add to Cart';
   }
 }
 
 function selectVariant(el) {
   document.querySelectorAll('.pack-option').forEach(p => p.classList.remove('selected'));
   el.classList.add('selected');
-  const variantSelect = document.querySelector('.fore-funny-variant-select');
-  if (variantSelect && el.dataset.variantId) {
-    variantSelect.value = el.dataset.variantId;
-  }
-  const packNumber = getPackFromTitle(getSelectedPackLabel());
-  if (packNumber) selectedPack = packNumber;
-  updateForeFunnyButtons(getSelectedVariant());
+  const variantId = el.dataset.variantId;
+  const price = el.dataset.price;
+
+  // Update hidden variant input
+  document.querySelector('[name="id"]').value = variantId;
+
+  // Update button price
+  document.getElementById('mainAtc').textContent = 'Add to Cart — ' + price + ' AUD';
+
+  // Update sticky bar
+  document.querySelector('.sticky-atc-text strong').textContent = 'Pack ' + el.querySelector('.pack-qty').textContent + ' desde ' + price + ' AUD';
+
+  // Update product image via Shopify variant
+  fetch('/variants/' + variantId + '.js')
+    .then(r => r.json())
+    .then(variant => {
+      if (variant.featured_image) {
+        document.querySelector('.main-image img').src = variant.featured_image.src;
+      }
+    });
 }
 
 function selectPack(el) {
@@ -98,7 +110,7 @@ function updateForeFunnyCartCount(count) {
 function addSelectedForeFunnyVariant() {
   const variant = getSelectedVariant();
   const stickyButton = document.querySelector('.sticky-atc-btn');
-  if (!variant || !variant.available) return;
+  if (!variant) return;
 
   if (stickyButton) {
     stickyButton.disabled = true;
@@ -169,9 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
     productSection.addEventListener('submit', (event) => {
       const form = event.target;
       if (!form.matches('form[action*="/cart/add"]')) return;
-      const variant = getSelectedVariant();
-      if (!variant || variant.available) return;
-      event.preventDefault();
     });
   }
 });
