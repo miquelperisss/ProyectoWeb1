@@ -67,24 +67,34 @@ function updateForeFunnyButtons(variant) {
 function selectVariant(el) {
   document.querySelectorAll('.pack-option').forEach(p => p.classList.remove('selected'));
   el.classList.add('selected');
+
   const variantId = el.dataset.variantId;
   const price = el.dataset.price;
 
-  // Update hidden variant input
-  document.querySelector('[name="id"]').value = variantId;
+  // Update hidden variant input for cart
+  const idInput = document.querySelector('[name="id"]');
+  if (idInput) idInput.value = variantId;
 
-  // Update button price
-  document.getElementById('mainAtc').textContent = 'Add to Cart — ' + price + ' AUD';
+  // Update Add to Cart button
+  const atcBtn = document.getElementById('mainAtc');
+  if (atcBtn) atcBtn.textContent = 'Add to Cart — ' + price + ' AUD';
 
   // Update sticky bar
-  document.querySelector('.sticky-atc-text strong').textContent = 'Pack ' + el.querySelector('.pack-qty').textContent + ' desde ' + price + ' AUD';
+  const stickyStrong = document.querySelector('.sticky-atc-text strong');
+  if (stickyStrong) stickyStrong.textContent = price + ' AUD';
 
-  // Update product image via Shopify variant
+  // Fetch variant data and update image
   fetch('/variants/' + variantId + '.js')
     .then(r => r.json())
     .then(variant => {
-      if (variant.featured_image) {
-        document.querySelector('.main-image img').src = variant.featured_image.src;
+      if (variant.featured_image && variant.featured_image.src) {
+        const mainImg = document.querySelector('.main-image img');
+        if (mainImg) {
+          mainImg.src = variant.featured_image.src;
+          mainImg.style.transition = 'opacity 0.3s';
+          mainImg.style.opacity = '0';
+          setTimeout(() => mainImg.style.opacity = '1', 50);
+        }
       }
     });
 }
