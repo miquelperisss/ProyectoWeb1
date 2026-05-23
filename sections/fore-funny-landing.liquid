@@ -1,0 +1,301 @@
+{{ 'fore-funny.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'fore-funny.js' | asset_url }}" defer="defer"></script>
+
+{% liquid
+  assign landing_product = section.settings.product
+  if landing_product == blank and product != blank
+    assign landing_product = product
+  endif
+
+  assign hero_headline = settings.fore_funny_hero_headline | default: 'The only tee that makes you smile <em>before</em> your swing.'
+  assign hero_subheadline = settings.fore_funny_hero_subheadline | default: 'Premium plastic golf tees with a twist. 3-inch height, perfect balance, and a design that''ll get a laugh on any course.'
+  assign sold_count = settings.fore_funny_sold_count | default: '12K+'
+  assign rating = settings.fore_funny_rating | default: '4.9'
+  assign review_count = settings.fore_funny_review_count | default: '847'
+  assign shipping_threshold = settings.fore_funny_shipping_threshold | default: '$60 AUD'
+%}
+
+<div data-fore-funny-section="{{ section.id }}">
+  <div class="sticky-atc" id="stickyAtc">
+    <div class="sticky-atc-text">Fore & Funny™ Golf Tees — <strong>Pack ×50 desde $26.00 AUD</strong></div>
+    <button class="sticky-atc-btn" type="button">Add to Cart</button>
+  </div>
+
+  <section class="hero" style="padding:0;">
+    <nav class="hero-nav">
+      <div class="logo">Fore & <span>Funny</span>™</div>
+      <a href="{{ routes.cart_url }}" class="nav-cart" data-fore-funny-cart-link>🛒 Cart ({{ cart.item_count }})</a>
+    </nav>
+
+    <div class="hero-content">
+      <span class="hero-eyebrow">🏌️ The Golf Tee Reinvented</span>
+      <h1>{{ hero_headline }}</h1>
+      <p class="hero-sub">{{ hero_subheadline }}</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" type="button" onclick="document.getElementById('product').scrollIntoView({behavior:'smooth'})">Shop the Packs →</button>
+        <button class="btn-secondary" type="button" onclick="document.getElementById('gift').scrollIntoView({behavior:'smooth'})">Perfect as a gift</button>
+      </div>
+    </div>
+
+    <div class="hero-image">
+      <div class="hero-image-bg"></div>
+      <div class="hero-product-showcase">
+        <div class="tee-grid">
+          <div class="tee-figure tee-c1"><div class="tee-head"></div><div class="tee-body"></div></div>
+          <div class="tee-figure tee-c2"><div class="tee-head"></div><div class="tee-body"></div></div>
+          <div class="tee-figure tee-c3"><div class="tee-head"></div><div class="tee-body"></div></div>
+          <div class="tee-figure tee-c4"><div class="tee-head"></div><div class="tee-body"></div></div>
+        </div>
+        <div class="hero-proof">
+          <div class="hero-proof-item"><div class="hero-proof-num">{{ sold_count }}</div><div class="hero-proof-label">Sold</div></div>
+          <div class="hero-proof-item"><div class="hero-proof-num">{{ rating }}★</div><div class="hero-proof-label">Rating</div></div>
+          <div class="hero-proof-item"><div class="hero-proof-num">24h</div><div class="hero-proof-label">Shipping</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="proof-bar">
+    <div class="proof-item"><span class="stars">★★★★★</span> <strong>{{ rating }}/5</strong> — {{ review_count }} reviews</div>
+    <div class="proof-divider"></div>
+    <div class="proof-item">🚀 Over {{ sold_count }} packs sold worldwide</div>
+    <div class="proof-divider"></div>
+    <div class="proof-item">📦 Ships in 24h · Free over {{ shipping_threshold }}</div>
+    <div class="proof-divider"></div>
+    <div class="proof-item">✅ 30-day money back guarantee</div>
+  </div>
+
+  <section class="product-section" id="product">
+    <div class="product-grid">
+      <div class="product-gallery fade-in">
+        <div class="main-image">
+          <div class="main-image-inner">
+            <div class="product-tees-display">
+              <div class="ptee ptee-1"><div class="ptee-head"></div><div class="ptee-body"></div></div>
+              <div class="ptee ptee-2" style="margin-bottom:20px;"><div class="ptee-head"></div><div class="ptee-body"></div></div>
+              <div class="ptee ptee-3"><div class="ptee-head"></div><div class="ptee-body"></div></div>
+              <div class="ptee ptee-4" style="margin-bottom:10px;"><div class="ptee-head"></div><div class="ptee-body"></div></div>
+              <div class="ptee ptee-5"><div class="ptee-head"></div><div class="ptee-body"></div></div>
+            </div>
+          </div>
+          <div class="image-badge">Multicolor Pack</div>
+        </div>
+        <div class="thumbnails">
+          <div class="thumb active"><div class="thumb-inner"></div></div>
+          <div class="thumb"><div class="thumb-inner"></div></div>
+          <div class="thumb"><div class="thumb-inner"></div></div>
+          <div class="thumb"><div class="thumb-inner"></div></div>
+        </div>
+      </div>
+
+      <div class="product-info fade-in">
+        <div class="product-stars">
+          <span class="s">★★★★★</span>
+          <span>{{ rating }} · {{ review_count }} reviews</span>
+        </div>
+        <h2 class="product-name">{% if landing_product != blank %}{{ landing_product.title }}{% else %}Bikini Lady Golf Tees{% endif %}</h2>
+        <p class="product-tagline">Plastic · 3-inch · Multicolor · Pack of your choice</p>
+
+        {% render 'fore-funny-product-form', product: landing_product %}
+
+        <div class="trust-row">
+          <div class="trust-item"><span class="trust-icon">🔒</span> Secure checkout</div>
+          <div class="trust-item"><span class="trust-icon">📦</span> Ships in 24h</div>
+          <div class="trust-item"><span class="trust-icon">↩️</span> 30-day returns</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section fade-in">
+    <div style="max-width:1100px; margin:0 auto;">
+      <div class="section-eyebrow">Why these tees</div>
+      <div class="section-title">Seriously good.<br><em>Seriously funny.</em></div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🏌️</div>
+          <div class="feature-title">Perfect 3-inch height</div>
+          <p class="feature-text">The ideal height for drivers and woods. Consistent ball position, consistent swing. The ladies hold it steady — every time.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💪</div>
+          <div class="feature-title">Durable plastic</div>
+          <p class="feature-text">High-quality plastic that survives swing after swing. Lightweight, flexible, won't snap on impact. Outlasts cheap wooden tees by miles.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <div class="feature-title">5 vibrant colors</div>
+          <p class="feature-text">Easy to spot in the grass. Each pack comes with a mix of colors so you'll always find your tee — and so will everyone on the fairway.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gift-section" id="gift">
+    <div class="gift-inner fade-in">
+      <div class="gift-content">
+        <div class="section-eyebrow">The perfect gift</div>
+        <div class="section-title">For the golfer who <em>already has everything.</em></div>
+        <p class="gift-text">They've got the clubs, the glove, the fancy rangefinder. But we guarantee they don't have these. Perfect for birthdays, Father's Day, bachelor parties — or honestly, just Tuesday.</p>
+        <div class="gift-tags">
+          <span class="gift-tag">🎂 Birthdays</span>
+          <span class="gift-tag">👔 Father's Day</span>
+          <span class="gift-tag">🥂 Bachelor Parties</span>
+          <span class="gift-tag">🎄 Christmas</span>
+          <span class="gift-tag">🏆 Golf Tournaments</span>
+        </div>
+        <button class="btn-primary" type="button" onclick="document.getElementById('product').scrollIntoView({behavior:'smooth'})">Shop Gift Packs →</button>
+      </div>
+      <div class="gift-visual">
+        <div class="gift-box-art">🎁</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reviews-section fade-in">
+    <div style="max-width:1100px; margin:0 auto;">
+      <div class="reviews-header">
+        <div>
+          <div class="section-eyebrow">Customer reviews</div>
+          <div class="section-title">They laughed.<br>Then they bought more.</div>
+        </div>
+        <div class="reviews-score">
+          <div class="big-score">{{ rating }}</div>
+          <div class="score-stars">★★★★★</div>
+          <div class="score-count">Based on {{ review_count }} reviews</div>
+        </div>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar rv-a">MR</div>
+            <div>
+              <div class="review-author">Mike R.</div>
+              <div class="review-meta">Sydney, Australia · Verified Purchase</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Bought these as a gag gift for my mate's 50th. He loved them so much he actually uses them every round now. Bought another pack for myself."</p>
+          <span class="review-badge">Pack × 100</span>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar rv-b">JT</div>
+            <div>
+              <div class="review-author">James T.</div>
+              <div class="review-meta">Melbourne, Australia · Verified Purchase</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Used these at our corporate golf day and they were the talk of the course. Everyone was asking where to get them. Great quality too — none broke."</p>
+          <span class="review-badge">Pack × 500</span>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar rv-c">SB</div>
+            <div>
+              <div class="review-author">Steve B.</div>
+              <div class="review-meta">Brisbane, Australia · Verified Purchase</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Perfect bachelor party favor. Ordered 50 for the weekend and they were a huge hit. Shipped fast, packed well. Already ordered again for Christmas gifts."</p>
+          <span class="review-badge">Pack × 50</span>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-avatar rv-d">DL</div>
+            <div>
+              <div class="review-author">Dave L.</div>
+              <div class="review-meta">Perth, Australia · Verified Purchase</div>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"My golf buddy spotted one on the 1st tee and hasn't stopped talking about it. Functional, funny, and a great conversation starter. 10/10 would recommend."</p>
+          <span class="review-badge">Pack × 10</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq-section fade-in">
+    <div class="faq-inner">
+      <div style="text-align:center; margin-bottom:48px;">
+        <div class="section-eyebrow" style="text-align:center;">Questions</div>
+        <div class="section-title">Everything you need to know</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" type="button" onclick="toggleFaq(this)">
+          What size are the tees?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">All tees are 3 inches (76mm) in height — the standard size for drivers and woods. They work with all standard club sizes and are compatible with any golf ball.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" onclick="toggleFaq(this)">
+          What material are they made of?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">High-quality flexible plastic. They're durable, lightweight, and designed to survive multiple rounds. Far more resilient than wooden tees — they bend on impact instead of snapping.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" onclick="toggleFaq(this)">
+          Is there a minimum order?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">No minimum — our smallest pack is just 10 tees. We also offer bulk packs of 50, 100, and 500 for better value per tee. Perfect for events, tournaments, or gifts.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" onclick="toggleFaq(this)">
+          How fast do you ship?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">Orders placed before 2pm AEST ship same day. Standard shipping is 3–5 business days within Australia. Express options available at checkout. Free shipping on orders over {{ shipping_threshold }}.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" onclick="toggleFaq(this)">
+          Can I use these at any golf course?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">Absolutely. These are standard 3-inch plastic golf tees — legal for casual rounds and competitions. We can't speak for your playing partners' reactions, though. That's entirely on you.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo">Fore & <span style="color:var(--gold)">Funny</span>™</div>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Shipping & Returns</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="footer-payments">
+      <span class="payment-badge">Visa</span>
+      <span class="payment-badge">MC</span>
+      <span class="payment-badge">PayPal</span>
+      <span class="payment-badge">Amex</span>
+    </div>
+  </footer>
+</div>
+
+{% schema %}
+{
+  "name": "Fore & Funny landing",
+  "tag": "section",
+  "class": "section-fore-funny-landing",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fore & Funny landing"
+    }
+  ]
+}
+{% endschema %}
