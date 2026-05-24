@@ -1,0 +1,83 @@
+{{ 'collection.css' | asset_url | stylesheet_tag }}
+
+<section class="collection-page">
+  <header class="collection-page__header">
+    <a class="collection-page__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }} home">
+      {{ shop.name | escape }}
+    </a>
+    {% render 'cart-icon-bubble' %}
+  </header>
+
+  <div class="collection-page__inner">
+    <div class="collection-page__title-row">
+      <div>
+        <p class="collection-page__eyebrow">Shop</p>
+        <h1 class="collection-page__title">
+          {% if collection.handle == 'all' %}
+            All Products
+          {% else %}
+            {{ collection.title | escape }}
+          {% endif %}
+        </h1>
+      </div>
+      <a class="collection-page__back" href="{{ routes.root_url }}">Back to home</a>
+    </div>
+
+    {% paginate collection.products by 24 %}
+      {% if collection.products_count > 0 %}
+        <div class="collection-grid">
+          {% for product in collection.products %}
+            <article class="collection-card">
+              <a class="collection-card__media" href="{{ product.url | within: collection }}">
+                {% if product.featured_image %}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 600 }}"
+                    alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                    width="600"
+                    height="{{ 600 | divided_by: product.featured_image.aspect_ratio | ceil }}"
+                    loading="lazy"
+                  >
+                {% else %}
+                  <div class="collection-card__placeholder" aria-hidden="true">{{ shop.name | escape }}</div>
+                {% endif %}
+              </a>
+
+              <div class="collection-card__content">
+                <a class="collection-card__title" href="{{ product.url | within: collection }}">
+                  {{ product.title | escape }}
+                </a>
+                <p class="collection-card__price">
+                  {% if product.price_varies %}
+                    From {{ product.price_min | money }} AUD
+                  {% else %}
+                    {{ product.price | money }} AUD
+                  {% endif %}
+                </p>
+                <a class="collection-card__button" href="{{ product.url | within: collection }}">View Product</a>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+
+        {% if paginate.pages > 1 %}
+          <nav class="collection-pagination" role="navigation" aria-label="Pagination">
+            {{ paginate | default_pagination }}
+          </nav>
+        {% endif %}
+      {% else %}
+        <div class="collection-empty">
+          <h2>No products found</h2>
+          <p>Please check back soon or return to the homepage.</p>
+          <a class="collection-card__button" href="{{ routes.root_url }}">Back to home</a>
+        </div>
+      {% endif %}
+    {% endpaginate %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection product grid",
+  "settings": []
+}
+{% endschema %}
