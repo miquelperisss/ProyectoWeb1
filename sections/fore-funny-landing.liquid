@@ -5,14 +5,12 @@
 {{ 'fore-funny.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'fore-funny.js' | asset_url }}" defer="defer"></script>
 
-{% liquid
-  assign hero_headline = settings.fore_funny_hero_headline | default: 'The only tee that makes you smile <em>before</em> your swing.'
-  assign hero_subheadline = settings.fore_funny_hero_subheadline | default: "Premium plastic golf tees with a twist. 3-inch height, perfect balance, and a design that'll get a laugh on any course."
-  assign sold_count = settings.fore_funny_sold_count | default: '12K+'
-  assign rating = settings.fore_funny_rating | default: '4.9'
-  assign review_count = settings.fore_funny_review_count | default: '847'
-  assign shipping_threshold = settings.fore_funny_shipping_threshold | default: '$60 AUD'
-%}
+{% assign hero_headline = settings.fore_funny_hero_headline | default: 'The only tee that makes you smile <em>before</em> your swing.' %}
+{% assign hero_subheadline = settings.fore_funny_hero_subheadline | default: "Premium plastic golf tees with a twist. 3-inch height, perfect balance, and a design that'll get a laugh on any course." %}
+{% assign sold_count = settings.fore_funny_sold_count | default: '12K+' %}
+{% assign rating = settings.fore_funny_rating | default: '4.9' %}
+{% assign review_count = settings.fore_funny_review_count | default: '847' %}
+{% assign shipping_threshold = settings.fore_funny_shipping_threshold | default: '$60 AUD' %}
 
 <div data-fore-funny-section="{{ section.id }}" data-shop-name="{{ shop.name | default: 'Fore & Funny™' | escape }}">
   <div class="sticky-atc" id="stickyAtc">
@@ -107,21 +105,19 @@
           <p class="pack-label">Choose your pack</p>
           <div class="packs">
             {% for variant in product.variants %}
-              {% liquid
-                assign pack_size = variant.title | remove: '×' | remove: 'x' | remove: 'X' | remove: 'tees' | remove: 'Tee' | remove: 'Tees' | strip
-                assign pack_before = '$8.00'
-                assign pack_save = 'Save 33%'
-                if pack_size contains '500'
-                  assign pack_before = '$320.00'
-                  assign pack_save = 'Save 38%'
-                elsif pack_size contains '100'
-                  assign pack_before = '$70.00'
-                  assign pack_save = 'Save 33%'
-                elsif pack_size contains '50'
-                  assign pack_before = '$38.00'
-                  assign pack_save = 'Save 32%'
-                endif
-              %}
+              {% assign pack_size = variant.title | remove: '×' | remove: 'x' | remove: 'X' | remove: 'tees' | remove: 'Tee' | remove: 'Tees' | strip %}
+              {% assign pack_before = '$8.00' %}
+              {% assign pack_save = 'Save 33%' %}
+              {% if pack_size contains '500' %}
+                {% assign pack_before = '$320.00' %}
+                {% assign pack_save = 'Save 38%' %}
+              {% elsif pack_size contains '100' %}
+                {% assign pack_before = '$70.00' %}
+                {% assign pack_save = 'Save 33%' %}
+              {% elsif pack_size contains '50' %}
+                {% assign pack_before = '$38.00' %}
+                {% assign pack_save = 'Save 32%' %}
+              {% endif %}
               <div class="pack-option {% if forloop.index == 2 %}selected{% endif %}"
                    data-variant-id="{{ variant.id }}"
                    data-price="{{ variant.price | money }}"
