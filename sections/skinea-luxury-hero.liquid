@@ -1,0 +1,338 @@
+<section
+  id="SkineaLuxuryHero-{{ section.id }}"
+  class="skinea-luxury-hero"
+  style="
+    --skinea-hero-text: {{ section.settings.text_color }};
+    --skinea-hero-accent: {{ section.settings.accent_color }};
+    --skinea-hero-soft: {{ section.settings.soft_color }};
+  "
+>
+  <div class="skinea-luxury-hero__inner">
+    <div class="skinea-luxury-hero__content">
+      {% if section.settings.eyebrow != blank %}
+        <p class="skinea-luxury-hero__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h1 class="skinea-luxury-hero__heading">{{ section.settings.heading }}</h1>
+      {% endif %}
+
+      {% if section.settings.text != blank %}
+        <div class="skinea-luxury-hero__text">{{ section.settings.text }}</div>
+      {% endif %}
+
+      {% if section.settings.button_label != blank %}
+        <a
+          class="skinea-luxury-hero__button"
+          href="{{ section.settings.button_link | default: routes.all_products_collection_url }}"
+        >
+          {{ section.settings.button_label | escape }}
+        </a>
+      {% endif %}
+
+      {% if section.settings.trust_text != blank %}
+        <p class="skinea-luxury-hero__trust">{{ section.settings.trust_text | escape }}</p>
+      {% endif %}
+    </div>
+
+    <div class="skinea-luxury-hero__media">
+      <div class="skinea-luxury-hero__image-wrap">
+        {% if section.settings.product_image != blank %}
+          {{
+            section.settings.product_image
+            | image_url: width: 1400
+            | image_tag:
+              widths: '375, 550, 750, 950, 1200, 1400',
+              sizes: '(min-width: 990px) 48vw, 92vw',
+              loading: 'eager',
+              class: 'skinea-luxury-hero__image'
+          }}
+        {% else %}
+          {{ 'product-1' | placeholder_svg_tag: 'skinea-luxury-hero__placeholder' }}
+        {% endif %}
+
+        {% if section.settings.product_badge != blank %}
+          <div class="skinea-luxury-hero__badge">{{ section.settings.product_badge | escape }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .skinea-luxury-hero {
+    background: #ffffff;
+    color: var(--skinea-hero-text);
+    overflow: hidden;
+    padding: clamp(4rem, 8vw, 9rem) clamp(1.6rem, 5vw, 6rem);
+  }
+
+  .skinea-luxury-hero * {
+    box-sizing: border-box;
+  }
+
+  .skinea-luxury-hero__inner {
+    align-items: center;
+    display: grid;
+    gap: clamp(3rem, 7vw, 8rem);
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0 auto;
+    max-width: 128rem;
+  }
+
+  .skinea-luxury-hero__content {
+    animation: skinea-hero-rise 700ms ease both;
+  }
+
+  .skinea-luxury-hero__eyebrow {
+    color: var(--skinea-hero-accent);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    line-height: 1.2;
+    margin: 0 0 1.6rem;
+    text-transform: uppercase;
+  }
+
+  .skinea-luxury-hero__heading {
+    color: var(--skinea-hero-text);
+    font-family: var(--font-heading-family);
+    font-size: clamp(4rem, 8vw, 9rem);
+    font-style: var(--font-heading-style);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 0.98;
+    margin: 0;
+    max-width: 9.5ch;
+  }
+
+  .skinea-luxury-hero__heading p {
+    margin: 0;
+  }
+
+  .skinea-luxury-hero__text {
+    color: rgba(37, 24, 36, 0.72);
+    font-size: clamp(1.6rem, 1.7vw, 2rem);
+    line-height: 1.65;
+    margin-top: 2rem;
+    max-width: 54rem;
+  }
+
+  .skinea-luxury-hero__text p {
+    margin: 0;
+  }
+
+  .skinea-luxury-hero__button {
+    align-items: center;
+    background: var(--skinea-hero-text);
+    border-radius: 999rem;
+    color: #ffffff;
+    display: inline-flex;
+    font-size: 1.4rem;
+    font-weight: 700;
+    justify-content: center;
+    margin-top: 3rem;
+    min-height: 5rem;
+    padding: 0 2.8rem;
+    text-decoration: none;
+    transition: box-shadow 200ms ease, transform 200ms ease, background 200ms ease;
+  }
+
+  .skinea-luxury-hero__button:hover {
+    background: var(--skinea-hero-accent);
+    box-shadow: 0 1.6rem 4rem rgba(37, 24, 36, 0.16);
+    transform: translateY(-0.2rem);
+  }
+
+  .skinea-luxury-hero__trust {
+    color: rgba(37, 24, 36, 0.56);
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin: 1.6rem 0 0;
+  }
+
+  .skinea-luxury-hero__media {
+    animation: skinea-hero-float-in 800ms ease 120ms both;
+  }
+
+  .skinea-luxury-hero__image-wrap {
+    background:
+      radial-gradient(circle at 50% 20%, var(--skinea-hero-soft) 0%, #ffffff 58%),
+      #ffffff;
+    border: 0.1rem solid rgba(37, 24, 36, 0.08);
+    border-radius: clamp(2.8rem, 5vw, 5rem);
+    box-shadow: 0 2.4rem 7rem rgba(37, 24, 36, 0.1);
+    min-height: clamp(38rem, 54vw, 68rem);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .skinea-luxury-hero__image,
+  .skinea-luxury-hero__placeholder {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  .skinea-luxury-hero__placeholder {
+    background: var(--skinea-hero-soft);
+    fill: var(--skinea-hero-accent);
+  }
+
+  .skinea-luxury-hero__badge {
+    backdrop-filter: blur(1.6rem);
+    background: rgba(255, 255, 255, 0.82);
+    border: 0.1rem solid rgba(255, 255, 255, 0.72);
+    border-radius: 1.8rem;
+    bottom: 1.6rem;
+    box-shadow: 0 1.4rem 4rem rgba(37, 24, 36, 0.12);
+    color: var(--skinea-hero-text);
+    font-size: 1.3rem;
+    font-weight: 700;
+    left: 1.6rem;
+    max-width: 24rem;
+    padding: 1.2rem 1.4rem;
+    position: absolute;
+  }
+
+  @keyframes skinea-hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes skinea-hero-float-in {
+    from {
+      opacity: 0;
+      transform: translateY(2.4rem) scale(0.98);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .skinea-luxury-hero__inner {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .skinea-luxury-hero {
+      padding: 3.2rem 1.4rem 4.8rem;
+    }
+
+    .skinea-luxury-hero__heading {
+      max-width: 10ch;
+    }
+
+    .skinea-luxury-hero__button {
+      width: 100%;
+    }
+
+    .skinea-luxury-hero__image-wrap {
+      min-height: 40rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Skinea luxury hero",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Skinea beauty technology"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Elevate your glow ritual"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Premium skincare tools designed to sculpt, refresh and bring a spa-level moment into your daily routine.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop Skinea"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "trust_text",
+      "label": "Trust text",
+      "default": "Modern skincare technology. Minimal design. Visible self-care."
+    },
+    {
+      "type": "header",
+      "content": "Product image"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Product image"
+    },
+    {
+      "type": "text",
+      "id": "product_badge",
+      "label": "Product badge",
+      "default": "Designed for lifted, refreshed-looking skin"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#251824"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#c98faf"
+    },
+    {
+      "type": "color",
+      "id": "soft_color",
+      "label": "Soft background glow",
+      "default": "#fff1f8"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Skinea luxury hero"
+    }
+  ]
+}
+{% endschema %}

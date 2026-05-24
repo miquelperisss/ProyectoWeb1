@@ -1,0 +1,632 @@
+{% liquid
+  assign review_blocks = section.blocks | where: 'type', 'review'
+%}
+
+<section
+  id="SkineaReviews-{{ section.id }}"
+  class="skinea-reviews"
+  style="
+    --skinea-reviews-text: {{ section.settings.text_color }};
+    --skinea-reviews-pink: {{ section.settings.pink_accent }};
+    --skinea-reviews-purple: {{ section.settings.purple_accent }};
+    --skinea-reviews-soft: {{ section.settings.soft_background }};
+  "
+>
+  <div class="skinea-reviews__header">
+    <div>
+      {% if section.settings.eyebrow != blank %}
+        <p class="skinea-reviews__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2>{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+    </div>
+
+    {% if section.settings.text != blank %}
+      <div class="skinea-reviews__text">{{ section.settings.text }}</div>
+    {% endif %}
+  </div>
+
+  {% if review_blocks.size > 0 %}
+    <skinea-reviews-carousel class="skinea-reviews__carousel">
+      <div class="skinea-reviews__controls" aria-label="Review carousel controls">
+        <button type="button" class="skinea-reviews__arrow" data-skinea-reviews-prev aria-label="Previous review">
+          <span aria-hidden="true">&larr;</span>
+        </button>
+        <button type="button" class="skinea-reviews__arrow" data-skinea-reviews-next aria-label="Next review">
+          <span aria-hidden="true">&rarr;</span>
+        </button>
+      </div>
+
+      <div class="skinea-reviews__track" data-skinea-reviews-track>
+        {% for block in review_blocks %}
+          <article class="skinea-reviews__card" {{ block.shopify_attributes }}>
+            <div class="skinea-reviews__media-grid">
+              <div class="skinea-reviews__result-media">
+                {% if block.settings.before_image != blank %}
+                  {{
+                    block.settings.before_image
+                    | image_url: width: 600
+                    | image_tag:
+                      widths: '220, 360, 480, 600',
+                      sizes: '(min-width: 990px) 16vw, 44vw',
+                      loading: 'lazy'
+                  }}
+                {% else %}
+                  {{ 'image' | placeholder_svg_tag: 'skinea-reviews__placeholder' }}
+                {% endif %}
+                <span>{{ block.settings.before_label | escape }}</span>
+              </div>
+
+              <div class="skinea-reviews__result-media">
+                {% if block.settings.after_image != blank %}
+                  {{
+                    block.settings.after_image
+                    | image_url: width: 600
+                    | image_tag:
+                      widths: '220, 360, 480, 600',
+                      sizes: '(min-width: 990px) 16vw, 44vw',
+                      loading: 'lazy'
+                  }}
+                {% else %}
+                  {{ 'lifestyle-1' | placeholder_svg_tag: 'skinea-reviews__placeholder' }}
+                {% endif %}
+                <span>{{ block.settings.after_label | escape }}</span>
+              </div>
+            </div>
+
+            <div class="skinea-reviews__content">
+              <div
+                class="skinea-reviews__stars"
+                aria-label="{{ block.settings.rating }} out of 5 stars"
+              >
+                {% for star_index in (1..5) %}
+                  <span class="{% if star_index <= block.settings.rating %}is-filled{% endif %}"></span>
+                {% endfor %}
+              </div>
+
+              {% if block.settings.platform_label != blank %}
+                <p class="skinea-reviews__platform">{{ block.settings.platform_label | escape }}</p>
+              {% endif %}
+
+              {% if block.settings.quote != blank %}
+                <blockquote>{{ block.settings.quote | escape }}</blockquote>
+              {% endif %}
+
+              <div class="skinea-reviews__customer">
+                <div class="skinea-reviews__avatar">
+                  {% if block.settings.profile_image != blank %}
+                    {{
+                      block.settings.profile_image
+                      | image_url: width: 160
+                      | image_tag:
+                        widths: '80, 120, 160',
+                        sizes: '52px',
+                        loading: 'lazy'
+                    }}
+                  {% else %}
+                    <span aria-hidden="true">{{ block.settings.customer_initials | escape }}</span>
+                  {% endif %}
+                </div>
+
+                <div>
+                  {% if block.settings.customer_name != blank %}
+                    <p class="skinea-reviews__name">{{ block.settings.customer_name | escape }}</p>
+                  {% endif %}
+                  {% if block.settings.customer_detail != blank %}
+                    <p class="skinea-reviews__detail">{{ block.settings.customer_detail | escape }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </skinea-reviews-carousel>
+  {% endif %}
+</section>
+
+{% stylesheet %}
+  .skinea-reviews {
+    background:
+      radial-gradient(circle at 12% 0, var(--skinea-reviews-soft) 0, transparent 30rem),
+      #ffffff;
+    color: var(--skinea-reviews-text);
+    overflow: hidden;
+    padding: clamp(4rem, 8vw, 9rem) clamp(1.4rem, 5vw, 6rem);
+  }
+
+  .skinea-reviews * {
+    box-sizing: border-box;
+  }
+
+  .skinea-reviews__header {
+    align-items: end;
+    animation: skinea-reviews-rise 700ms ease both;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0 auto;
+    max-width: 128rem;
+  }
+
+  .skinea-reviews__eyebrow {
+    color: var(--skinea-reviews-purple);
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    margin: 0 0 1.4rem;
+    text-transform: uppercase;
+  }
+
+  .skinea-reviews h2 {
+    color: var(--skinea-reviews-text);
+    font-family: var(--font-heading-family);
+    font-size: clamp(3.4rem, 6vw, 7.2rem);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 0.98;
+    margin: 0;
+    max-width: 11ch;
+  }
+
+  .skinea-reviews__text {
+    color: rgba(37, 24, 36, 0.66);
+    font-size: clamp(1.55rem, 1.7vw, 1.95rem);
+    line-height: 1.65;
+    max-width: 56rem;
+  }
+
+  .skinea-reviews__text p {
+    margin: 0;
+  }
+
+  .skinea-reviews__carousel {
+    display: block;
+    margin: clamp(2.4rem, 5vw, 4rem) auto 0;
+    max-width: 128rem;
+    position: relative;
+  }
+
+  .skinea-reviews__controls {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: flex-end;
+    margin-bottom: 1.2rem;
+  }
+
+  .skinea-reviews__arrow {
+    align-items: center;
+    background: #ffffff;
+    border: 0.1rem solid rgba(37, 24, 36, 0.1);
+    border-radius: 999rem;
+    box-shadow: 0 1rem 3rem rgba(37, 24, 36, 0.08);
+    color: var(--skinea-reviews-text);
+    cursor: pointer;
+    display: inline-flex;
+    height: 4.4rem;
+    justify-content: center;
+    transition: background 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
+    width: 4.4rem;
+  }
+
+  .skinea-reviews__arrow:hover {
+    background: linear-gradient(135deg, var(--skinea-reviews-pink), var(--skinea-reviews-purple));
+    box-shadow: 0 1.4rem 4rem rgba(37, 24, 36, 0.14);
+    color: #ffffff;
+    transform: translateY(-0.2rem);
+  }
+
+  .skinea-reviews__track {
+    display: flex;
+    gap: 1.4rem;
+    margin-inline: -1.4rem;
+    overflow-x: auto;
+    padding: 0.4rem 1.4rem 1.8rem;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .skinea-reviews__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .skinea-reviews__card {
+    animation: skinea-reviews-card 700ms ease both;
+    background: rgba(255, 255, 255, 0.94);
+    border: 0.1rem solid rgba(37, 24, 36, 0.08);
+    border-radius: 2.8rem;
+    box-shadow: 0 1.8rem 5.5rem rgba(37, 24, 36, 0.08);
+    flex: 0 0 min(88vw, 38rem);
+    overflow: hidden;
+    scroll-snap-align: start;
+    transition: box-shadow 220ms ease, transform 220ms ease;
+  }
+
+  .skinea-reviews__card:hover {
+    box-shadow: 0 2.6rem 7rem rgba(37, 24, 36, 0.13);
+    transform: translateY(-0.4rem);
+  }
+
+  .skinea-reviews__media-grid {
+    display: grid;
+    gap: 0.1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .skinea-reviews__result-media {
+    aspect-ratio: 0.8;
+    background: var(--skinea-reviews-soft);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .skinea-reviews__result-media img,
+  .skinea-reviews__result-media svg {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  .skinea-reviews__result-media span {
+    backdrop-filter: blur(1.2rem);
+    background: rgba(255, 255, 255, 0.82);
+    border-radius: 999rem;
+    bottom: 1rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+    left: 1rem;
+    padding: 0.6rem 0.9rem;
+    position: absolute;
+  }
+
+  .skinea-reviews__content {
+    padding: 1.8rem;
+  }
+
+  .skinea-reviews__stars {
+    display: flex;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+  }
+
+  .skinea-reviews__stars span {
+    background: rgba(37, 24, 36, 0.15);
+    clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 56%, 79% 91%, 50% 70%, 21% 91%, 32% 56%, 2% 35%, 39% 35%);
+    display: block;
+    height: 1.6rem;
+    width: 1.6rem;
+  }
+
+  .skinea-reviews__stars span.is-filled {
+    background: linear-gradient(135deg, var(--skinea-reviews-pink), var(--skinea-reviews-purple));
+  }
+
+  .skinea-reviews__platform {
+    color: var(--skinea-reviews-purple);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    margin: 0 0 1.1rem;
+    text-transform: uppercase;
+  }
+
+  .skinea-reviews blockquote {
+    color: var(--skinea-reviews-text);
+    font-family: var(--font-heading-family);
+    font-size: clamp(2rem, 2.1vw, 2.7rem);
+    letter-spacing: -0.04em;
+    line-height: 1.18;
+    margin: 0;
+  }
+
+  .skinea-reviews__customer {
+    align-items: center;
+    border-top: 0.1rem solid rgba(37, 24, 36, 0.08);
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.8rem;
+    padding-top: 1.4rem;
+  }
+
+  .skinea-reviews__avatar {
+    align-items: center;
+    background: linear-gradient(135deg, var(--skinea-reviews-pink), var(--skinea-reviews-purple));
+    border-radius: 999rem;
+    color: #ffffff;
+    display: inline-flex;
+    flex: 0 0 5.2rem;
+    font-size: 1.3rem;
+    font-weight: 800;
+    height: 5.2rem;
+    justify-content: center;
+    overflow: hidden;
+    width: 5.2rem;
+  }
+
+  .skinea-reviews__avatar img {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  .skinea-reviews__name,
+  .skinea-reviews__detail {
+    margin: 0;
+  }
+
+  .skinea-reviews__name {
+    font-size: 1.42rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .skinea-reviews__detail {
+    color: rgba(37, 24, 36, 0.58);
+    font-size: 1.25rem;
+    line-height: 1.35;
+    margin-top: 0.2rem;
+  }
+
+  .skinea-reviews__placeholder {
+    background: var(--skinea-reviews-soft);
+    fill: var(--skinea-reviews-pink);
+  }
+
+  @keyframes skinea-reviews-rise {
+    from {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes skinea-reviews-card {
+    from {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .skinea-reviews__header {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+
+    .skinea-reviews__card {
+      flex-basis: 42rem;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .skinea-reviews__controls {
+      display: none;
+    }
+
+    .skinea-reviews__track {
+      display: grid;
+      gap: 1.6rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-inline: 0;
+      overflow: visible;
+      padding: 0;
+    }
+
+    .skinea-reviews__card {
+      flex: auto;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .skinea-reviews {
+      padding-inline: 1.4rem;
+    }
+
+    .skinea-reviews__card {
+      flex-basis: 84vw;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  class SkineaReviewsCarousel extends HTMLElement {
+    connectedCallback() {
+      this.track = this.querySelector('[data-skinea-reviews-track]')
+      this.previousButton = this.querySelector('[data-skinea-reviews-prev]')
+      this.nextButton = this.querySelector('[data-skinea-reviews-next]')
+
+      if (!this.track || !this.previousButton || !this.nextButton) return
+
+      this.previousButton.addEventListener('click', () => this.scrollCards(-1))
+      this.nextButton.addEventListener('click', () => this.scrollCards(1))
+    }
+
+    scrollCards(direction) {
+      this.track.scrollBy({
+        left: this.track.clientWidth * 0.86 * direction,
+        behavior: 'smooth',
+      })
+    }
+  }
+
+  if (!customElements.get('skinea-reviews-carousel')) {
+    customElements.define('skinea-reviews-carousel', SkineaReviewsCarousel)
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Skinea reviews",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Skinea glow stories"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Real rituals. Visible confidence."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Premium customer stories, UGC-inspired proof and before-after moments help shoppers trust the ritual before they add to bag.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#251824"
+    },
+    {
+      "type": "color",
+      "id": "pink_accent",
+      "label": "Soft pink accent",
+      "default": "#f0a8c8"
+    },
+    {
+      "type": "color",
+      "id": "purple_accent",
+      "label": "Soft purple accent",
+      "default": "#9a78ff"
+    },
+    {
+      "type": "color",
+      "id": "soft_background",
+      "label": "Soft background glow",
+      "default": "#fff4fa"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review card",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "platform_label",
+          "label": "Platform label",
+          "default": "TikTok review"
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "My skin looks more awake, and the ritual feels so much more elevated than a basic beauty tool."
+        },
+        {
+          "type": "text",
+          "id": "customer_name",
+          "label": "Customer name",
+          "default": "Mia R."
+        },
+        {
+          "type": "text",
+          "id": "customer_detail",
+          "label": "Customer detail",
+          "default": "Verified Skinea customer"
+        },
+        {
+          "type": "image_picker",
+          "id": "profile_image",
+          "label": "Profile image"
+        },
+        {
+          "type": "text",
+          "id": "customer_initials",
+          "label": "Fallback initials",
+          "default": "MR"
+        },
+        {
+          "type": "image_picker",
+          "id": "before_image",
+          "label": "Before image"
+        },
+        {
+          "type": "image_picker",
+          "id": "after_image",
+          "label": "After image"
+        },
+        {
+          "type": "text",
+          "id": "before_label",
+          "label": "Before label",
+          "default": "Before"
+        },
+        {
+          "type": "text",
+          "id": "after_label",
+          "label": "After label",
+          "default": "After"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Skinea reviews",
+      "blocks": [
+        {
+          "type": "review"
+        },
+        {
+          "type": "review",
+          "settings": {
+            "platform_label": "UGC review",
+            "quote": "It looks beautiful on my vanity and makes my skincare routine feel like a luxury facial moment.",
+            "customer_name": "Sofia L.",
+            "customer_detail": "Beauty-tech customer",
+            "customer_initials": "SL"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "platform_label": "Creator pick",
+            "quote": "The perfect pre-makeup ritual when I want my skin to look lifted, calm and glowing.",
+            "customer_name": "Ava K.",
+            "customer_detail": "Skincare creator",
+            "customer_initials": "AK"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

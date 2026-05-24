@@ -1,0 +1,990 @@
+{% liquid
+  assign benefit_blocks = section.blocks | where: 'type', 'benefit'
+  assign result_blocks = section.blocks | where: 'type', 'result'
+  assign protocol_blocks = section.blocks | where: 'type', 'protocol'
+  assign proof_blocks = section.blocks | where: 'type', 'proof'
+  assign faq_blocks = section.blocks | where: 'type', 'faq'
+  assign current_variant = product.selected_or_first_available_variant
+%}
+
+<section
+  id="SkineaProductResults-{{ section.id }}"
+  class="skinea-product"
+  style="
+    --skinea-product-accent: {{ section.settings.accent_color }};
+    --skinea-product-accent-2: {{ section.settings.secondary_accent_color }};
+    --skinea-product-ink: {{ section.settings.text_color }};
+    --skinea-product-soft: {{ section.settings.soft_background }};
+  "
+>
+  <div class="skinea-product__shell">
+    <div class="skinea-product__media-card">
+      {% if section.settings.lifestyle_image != blank %}
+        {{
+          section.settings.lifestyle_image
+          | image_url: width: 1400
+          | image_tag:
+            widths: '420, 640, 900, 1200, 1400',
+            sizes: '(min-width: 990px) 46vw, 92vw',
+            loading: 'lazy',
+            class: 'skinea-product__lifestyle'
+        }}
+      {% elsif product.featured_image != blank %}
+        {{
+          product.featured_image
+          | image_url: width: 1400
+          | image_tag:
+            widths: '420, 640, 900, 1200, 1400',
+            sizes: '(min-width: 990px) 46vw, 92vw',
+            loading: 'lazy',
+            class: 'skinea-product__lifestyle'
+        }}
+      {% else %}
+        {{ 'product-1' | placeholder_svg_tag: 'skinea-product__placeholder' }}
+      {% endif %}
+
+      {% if section.settings.media_badge != blank %}
+        <div class="skinea-product__media-badge">{{ section.settings.media_badge | escape }}</div>
+      {% endif %}
+    </div>
+
+    <div class="skinea-product__copy">
+      {% if section.settings.eyebrow != blank %}
+        <p class="skinea-product__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2>{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+
+      {% if section.settings.text != blank %}
+        <div class="skinea-product__text">{{ section.settings.text }}</div>
+      {% endif %}
+
+      {% if result_blocks.size > 0 %}
+        <div class="skinea-product__results" aria-label="Product result stats">
+          {% for block in result_blocks %}
+            <div class="skinea-product__result" {{ block.shopify_attributes }}>
+              {% if block.settings.value != blank %}
+                <strong>{{ block.settings.value | escape }}</strong>
+              {% endif %}
+              {% if block.settings.label != blank %}
+                <span>{{ block.settings.label | escape }}</span>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if benefit_blocks.size > 0 %}
+        <div class="skinea-product__benefits">
+          {% for block in benefit_blocks %}
+            <div class="skinea-product__benefit" {{ block.shopify_attributes }}>
+              {% if block.settings.icon != blank %}
+                <span aria-hidden="true">{{ block.settings.icon | escape }}</span>
+              {% endif %}
+              <div>
+                {% if block.settings.title != blank %}
+                  <h3>{{ block.settings.title | escape }}</h3>
+                {% endif %}
+                {% if block.settings.text != blank %}
+                  <p>{{ block.settings.text | escape }}</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if protocol_blocks.size > 0 %}
+    <div class="skinea-product__protocol">
+      <div class="skinea-product__section-heading">
+        {% if section.settings.protocol_eyebrow != blank %}
+          <p class="skinea-product__eyebrow">{{ section.settings.protocol_eyebrow | escape }}</p>
+        {% endif %}
+        {% if section.settings.protocol_heading != blank %}
+          <h2>{{ section.settings.protocol_heading | escape }}</h2>
+        {% endif %}
+      </div>
+
+      <div class="skinea-product__steps">
+        {% for block in protocol_blocks %}
+          <article class="skinea-product__step" {{ block.shopify_attributes }}>
+            <span>{{ forloop.index }}</span>
+            {% if block.settings.title != blank %}
+              <h3>{{ block.settings.title | escape }}</h3>
+            {% endif %}
+            {% if block.settings.text != blank %}
+              <p>{{ block.settings.text | escape }}</p>
+            {% endif %}
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if proof_blocks.size > 0 %}
+    <div class="skinea-product__proof">
+      <div class="skinea-product__section-heading">
+        {% if section.settings.proof_eyebrow != blank %}
+          <p class="skinea-product__eyebrow">{{ section.settings.proof_eyebrow | escape }}</p>
+        {% endif %}
+        {% if section.settings.proof_heading != blank %}
+          <h2>{{ section.settings.proof_heading | escape }}</h2>
+        {% endif %}
+      </div>
+
+      <div class="skinea-product__proof-grid">
+        {% for block in proof_blocks %}
+          <article class="skinea-product__proof-card" {{ block.shopify_attributes }}>
+            <div class="skinea-product__proof-media">
+              {% if block.settings.image != blank %}
+                {{
+                  block.settings.image
+                  | image_url: width: 900
+                  | image_tag:
+                    widths: '320, 480, 640, 900',
+                    sizes: '(min-width: 990px) 30vw, 88vw',
+                    loading: 'lazy'
+                }}
+              {% else %}
+                {{ 'image' | placeholder_svg_tag: 'skinea-product__placeholder' }}
+              {% endif %}
+              {% if block.settings.badge != blank %}
+                <span>{{ block.settings.badge | escape }}</span>
+              {% endif %}
+            </div>
+            <div>
+              {% if block.settings.title != blank %}
+                <h3>{{ block.settings.title | escape }}</h3>
+              {% endif %}
+              {% if block.settings.text != blank %}
+                <p>{{ block.settings.text | escape }}</p>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if faq_blocks.size > 0 %}
+    <div class="skinea-product__faq">
+      <div class="skinea-product__section-heading">
+        {% if section.settings.faq_eyebrow != blank %}
+          <p class="skinea-product__eyebrow">{{ section.settings.faq_eyebrow | escape }}</p>
+        {% endif %}
+        {% if section.settings.faq_heading != blank %}
+          <h2>{{ section.settings.faq_heading | escape }}</h2>
+        {% endif %}
+      </div>
+
+      <div class="skinea-product__faq-list">
+        {% for block in faq_blocks %}
+          <details class="skinea-product__faq-item" {{ block.shopify_attributes }}>
+            <summary>{{ block.settings.question | escape }}</summary>
+            <div>{{ block.settings.answer }}</div>
+          </details>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if section.settings.enable_sticky_atc and product != blank and current_variant != blank %}
+    <div class="skinea-product__sticky" aria-label="Sticky add to cart">
+      <div class="skinea-product__sticky-info">
+        {% if product.featured_image != blank %}
+          {{
+            product.featured_image
+            | image_url: width: 120
+            | image_tag:
+              widths: '80, 120',
+              sizes: '56px',
+              loading: 'lazy'
+          }}
+        {% endif %}
+        <div>
+          <strong>{{ product.title | escape }}</strong>
+          <span>{{ current_variant.price | money }}</span>
+        </div>
+      </div>
+
+      {% form 'product', product, class: 'skinea-product__sticky-form' %}
+        {% if product.variants.size > 1 %}
+          <label class="visually-hidden" for="SkineaStickyVariant-{{ section.id }}">{{ section.settings.variant_label | escape }}</label>
+          <select id="SkineaStickyVariant-{{ section.id }}" name="id">
+            {% for variant in product.variants %}
+              <option
+                value="{{ variant.id }}"
+                {% if variant == current_variant %}selected="selected"{% endif %}
+                {% unless variant.available %}disabled{% endunless %}
+              >
+                {{ variant.title | escape }}{% unless variant.available %} - {{ section.settings.sold_out_label | escape }}{% endunless %}
+              </option>
+            {% endfor %}
+          </select>
+        {% else %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+        {% endif %}
+        <button type="submit" {% unless current_variant.available %}disabled{% endunless %}>
+          {% if current_variant.available %}
+            {{ section.settings.add_to_cart_label | escape }}
+          {% else %}
+            {{ section.settings.sold_out_label | escape }}
+          {% endif %}
+        </button>
+      {% endform %}
+    </div>
+  {% endif %}
+</section>
+
+{% stylesheet %}
+  .skinea-product {
+    background:
+      radial-gradient(circle at 100% 0, color-mix(in srgb, var(--skinea-product-accent-2) 12%, transparent), transparent 34rem),
+      linear-gradient(180deg, #fff, color-mix(in srgb, var(--skinea-product-soft) 50%, #fff));
+    color: var(--skinea-product-ink);
+    overflow: clip;
+    padding: clamp(3.2rem, 7vw, 8rem) clamp(1.6rem, 5vw, 6.4rem);
+  }
+
+  .skinea-product * {
+    box-sizing: border-box;
+  }
+
+  .skinea-product__shell {
+    align-items: center;
+    display: grid;
+    gap: clamp(2rem, 6vw, 7rem);
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0 auto;
+    max-width: 132rem;
+  }
+
+  .skinea-product__media-card {
+    aspect-ratio: 0.9;
+    background: var(--skinea-product-soft);
+    border: 0.1rem solid rgba(71, 42, 66, 0.08);
+    border-radius: clamp(2.8rem, 5vw, 5.6rem);
+    box-shadow: 0 3rem 8rem rgba(71, 42, 66, 0.12);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .skinea-product__lifestyle,
+  .skinea-product__media-card > svg,
+  .skinea-product__proof-media img,
+  .skinea-product__proof-media svg {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  .skinea-product__media-badge {
+    backdrop-filter: blur(1.8rem);
+    background: rgba(255, 255, 255, 0.78);
+    border-radius: 2rem;
+    bottom: 1.8rem;
+    box-shadow: 0 1.8rem 5rem rgba(71, 42, 66, 0.14);
+    font-size: 1.35rem;
+    font-weight: 800;
+    left: 1.8rem;
+    max-width: 26rem;
+    padding: 1.3rem 1.5rem;
+    position: absolute;
+  }
+
+  .skinea-product__eyebrow {
+    color: color-mix(in srgb, var(--skinea-product-accent-2) 74%, var(--skinea-product-ink));
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    margin: 0 0 1.4rem;
+    text-transform: uppercase;
+  }
+
+  .skinea-product h2 {
+    font-family: var(--font-heading-family);
+    font-size: clamp(3.4rem, 6vw, 7.2rem);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 0.98;
+    margin: 0;
+  }
+
+  .skinea-product__text {
+    color: color-mix(in srgb, var(--skinea-product-ink) 66%, #fff);
+    font-size: clamp(1.6rem, 1.7vw, 2rem);
+    line-height: 1.65;
+    margin-top: 1.6rem;
+    max-width: 62rem;
+  }
+
+  .skinea-product__text p {
+    margin: 0;
+  }
+
+  .skinea-product__results {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 2.4rem;
+  }
+
+  .skinea-product__result,
+  .skinea-product__benefit,
+  .skinea-product__step,
+  .skinea-product__proof-card,
+  .skinea-product__faq-item {
+    background: rgba(255, 255, 255, 0.84);
+    border: 0.1rem solid rgba(71, 42, 66, 0.08);
+    box-shadow: 0 1.8rem 5rem rgba(71, 42, 66, 0.08);
+  }
+
+  .skinea-product__result {
+    border-radius: 2rem;
+    padding: 1.4rem;
+  }
+
+  .skinea-product__result strong {
+    display: block;
+    font-family: var(--font-heading-family);
+    font-size: clamp(2.8rem, 4vw, 4.8rem);
+    letter-spacing: -0.055em;
+    line-height: 1;
+  }
+
+  .skinea-product__result span {
+    color: color-mix(in srgb, var(--skinea-product-ink) 60%, #fff);
+    display: block;
+    font-size: 1.22rem;
+    line-height: 1.35;
+    margin-top: 0.6rem;
+  }
+
+  .skinea-product__benefits {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2.4rem;
+  }
+
+  .skinea-product__benefit {
+    align-items: flex-start;
+    border-radius: 2rem;
+    display: flex;
+    gap: 1.2rem;
+    padding: 1.5rem;
+  }
+
+  .skinea-product__benefit > span {
+    align-items: center;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--skinea-product-accent) 24%, #fff), color-mix(in srgb, var(--skinea-product-accent-2) 16%, #fff));
+    border-radius: 999rem;
+    display: inline-flex;
+    flex: 0 0 4.4rem;
+    font-size: 1.5rem;
+    height: 4.4rem;
+    justify-content: center;
+  }
+
+  .skinea-product h3 {
+    font-family: var(--font-heading-family);
+    font-size: clamp(2rem, 2.2vw, 2.8rem);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .skinea-product__benefit p,
+  .skinea-product__step p,
+  .skinea-product__proof-card p,
+  .skinea-product__faq-item div {
+    color: color-mix(in srgb, var(--skinea-product-ink) 62%, #fff);
+    font-size: 1.38rem;
+    line-height: 1.58;
+    margin: 0.6rem 0 0;
+  }
+
+  .skinea-product__protocol,
+  .skinea-product__proof,
+  .skinea-product__faq {
+    margin: clamp(5.6rem, 9vw, 10rem) auto 0;
+    max-width: 132rem;
+  }
+
+  .skinea-product__section-heading {
+    margin-bottom: 2rem;
+    max-width: 68rem;
+  }
+
+  .skinea-product__steps,
+  .skinea-product__proof-grid {
+    display: grid;
+    gap: 1.4rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .skinea-product__step,
+  .skinea-product__proof-card {
+    border-radius: 2.4rem;
+    overflow: hidden;
+    padding: 1.8rem;
+    transition: box-shadow 180ms ease, transform 180ms ease;
+  }
+
+  .skinea-product__step:hover,
+  .skinea-product__proof-card:hover {
+    box-shadow: 0 2.6rem 7rem rgba(71, 42, 66, 0.14);
+    transform: translateY(-0.3rem);
+  }
+
+  .skinea-product__step > span {
+    align-items: center;
+    background: var(--skinea-product-ink);
+    border-radius: 999rem;
+    color: #fff;
+    display: inline-flex;
+    font-size: 1.25rem;
+    font-weight: 800;
+    height: 3.6rem;
+    justify-content: center;
+    margin-bottom: 1.6rem;
+    width: 3.6rem;
+  }
+
+  .skinea-product__proof-card {
+    padding: 1rem;
+  }
+
+  .skinea-product__proof-card > div:last-child {
+    padding: 1.2rem 0.8rem 0.8rem;
+  }
+
+  .skinea-product__proof-media {
+    aspect-ratio: 1 / 1.08;
+    background: var(--skinea-product-soft);
+    border-radius: 1.8rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .skinea-product__proof-media span {
+    backdrop-filter: blur(1.4rem);
+    background: rgba(255, 255, 255, 0.82);
+    border-radius: 999rem;
+    bottom: 1rem;
+    font-size: 1.12rem;
+    font-weight: 800;
+    left: 1rem;
+    padding: 0.7rem 1rem;
+    position: absolute;
+  }
+
+  .skinea-product__faq {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .skinea-product__faq-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .skinea-product__faq-item {
+    border-radius: 1.8rem;
+    padding: 0.4rem 1.6rem;
+  }
+
+  .skinea-product__faq-item summary {
+    cursor: pointer;
+    font-size: 1.55rem;
+    font-weight: 800;
+    list-style: none;
+    padding: 1.4rem 0;
+  }
+
+  .skinea-product__faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .skinea-product__faq-item div {
+    padding-bottom: 1.5rem;
+  }
+
+  .skinea-product__sticky {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.9);
+    border: 0.1rem solid rgba(71, 42, 66, 0.08);
+    border-radius: 2rem;
+    bottom: 1.4rem;
+    box-shadow: 0 2rem 7rem rgba(71, 42, 66, 0.18);
+    display: grid;
+    gap: 1rem;
+    left: 1.4rem;
+    padding: 1rem;
+    position: fixed;
+    right: 1.4rem;
+    z-index: 35;
+  }
+
+  .skinea-product__sticky-info {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  .skinea-product__sticky-info img {
+    border-radius: 1.2rem;
+    height: 5.6rem;
+    object-fit: cover;
+    width: 5.6rem;
+  }
+
+  .skinea-product__sticky-info strong,
+  .skinea-product__sticky-info span {
+    display: block;
+  }
+
+  .skinea-product__sticky-info strong {
+    font-size: 1.38rem;
+    line-height: 1.2;
+  }
+
+  .skinea-product__sticky-info span {
+    color: color-mix(in srgb, var(--skinea-product-ink) 62%, #fff);
+    font-size: 1.25rem;
+    margin-top: 0.2rem;
+  }
+
+  .skinea-product__sticky-form {
+    display: grid;
+    gap: 0.8rem;
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0;
+  }
+
+  .skinea-product__sticky-form select,
+  .skinea-product__sticky-form button {
+    border-radius: 999rem;
+    font: inherit;
+    font-size: 1.35rem;
+    font-weight: 800;
+    min-height: 4.6rem;
+    padding: 0 1.4rem;
+  }
+
+  .skinea-product__sticky-form select {
+    background: #fff;
+    border: 0.1rem solid rgba(71, 42, 66, 0.12);
+    color: var(--skinea-product-ink);
+  }
+
+  .skinea-product__sticky-form button {
+    background: linear-gradient(135deg, var(--skinea-product-accent), var(--skinea-product-accent-2));
+    border: 0;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .skinea-product__sticky-form button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .skinea-product__placeholder {
+    background: color-mix(in srgb, var(--skinea-product-soft) 82%, #fff);
+    fill: color-mix(in srgb, var(--skinea-product-accent) 44%, #fff);
+  }
+
+  @media screen and (min-width: 750px) {
+    .skinea-product__results,
+    .skinea-product__steps,
+    .skinea-product__proof-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .skinea-product__sticky {
+      grid-template-columns: minmax(0, 1fr) auto;
+      left: 50%;
+      max-width: 96rem;
+      transform: translateX(-50%);
+    }
+
+    .skinea-product__sticky-form {
+      grid-template-columns: minmax(16rem, 1fr) auto;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .skinea-product__shell {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.94fr);
+    }
+
+    .skinea-product__faq {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .skinea-product {
+      padding-inline: 1.4rem;
+    }
+
+    .skinea-product__results {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Skinea product results",
+  "tag": "section",
+  "class": "section",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand colors"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Pink accent",
+      "default": "#f0a8c8"
+    },
+    {
+      "type": "color",
+      "id": "secondary_accent_color",
+      "label": "Purple accent",
+      "default": "#9a78ff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#251824"
+    },
+    {
+      "type": "color",
+      "id": "soft_background",
+      "label": "Soft background",
+      "default": "#fff4fa"
+    },
+    {
+      "type": "header",
+      "content": "Intro"
+    },
+    {
+      "type": "image_picker",
+      "id": "lifestyle_image",
+      "label": "Lifestyle image"
+    },
+    {
+      "type": "text",
+      "id": "media_badge",
+      "label": "Image badge",
+      "default": "A polished skincare ritual made for daily results."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Why it works"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Turn your routine into a results-focused ritual"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Position every Skinea product as premium skincare technology: intentional, beautiful, easy to use and centered on visible self-care moments.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Protocol"
+    },
+    {
+      "type": "text",
+      "id": "protocol_eyebrow",
+      "label": "Eyebrow",
+      "default": "How to use"
+    },
+    {
+      "type": "text",
+      "id": "protocol_heading",
+      "label": "Heading",
+      "default": "A simple three-step glow ritual"
+    },
+    {
+      "type": "header",
+      "content": "Proof"
+    },
+    {
+      "type": "text",
+      "id": "proof_eyebrow",
+      "label": "Eyebrow",
+      "default": "Social proof"
+    },
+    {
+      "type": "text",
+      "id": "proof_heading",
+      "label": "Heading",
+      "default": "Show the texture, ritual and result"
+    },
+    {
+      "type": "header",
+      "content": "FAQ"
+    },
+    {
+      "type": "text",
+      "id": "faq_eyebrow",
+      "label": "Eyebrow",
+      "default": "Questions"
+    },
+    {
+      "type": "text",
+      "id": "faq_heading",
+      "label": "Heading",
+      "default": "Everything they need before checkout"
+    },
+    {
+      "type": "header",
+      "content": "Sticky add to cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_atc",
+      "label": "Enable sticky add to cart",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_label",
+      "label": "Add to cart label",
+      "default": "Add to bag"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_label",
+      "label": "Sold out label",
+      "default": "Sold out"
+    },
+    {
+      "type": "text",
+      "id": "variant_label",
+      "label": "Variant label",
+      "default": "Choose option"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "result",
+      "name": "Result stat",
+      "settings": [
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "92%"
+        },
+        {
+          "type": "textarea",
+          "id": "label",
+          "label": "Label",
+          "default": "said their skin looked more refreshed after use"
+        }
+      ]
+    },
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon",
+          "default": "01"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Sculpted-looking contours"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Create a lifted, refined look with a consistent massage ritual."
+        }
+      ]
+    },
+    {
+      "type": "protocol",
+      "name": "Protocol step",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Prep"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Start with clean skin and apply your favorite serum or facial oil."
+        }
+      ]
+    },
+    {
+      "type": "proof",
+      "name": "Proof card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge",
+          "default": "Creator review"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "A ritual that looks as good as it feels"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Use lifestyle photos, TikTok screenshots and authentic UGC to support confidence."
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How often should I use it?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Use as directed for the specific tool. Most skincare rituals work best when used consistently and gently.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Skinea product results",
+      "blocks": [
+        {
+          "type": "result"
+        },
+        {
+          "type": "result",
+          "settings": {
+            "value": "4.9/5",
+            "label": "average customer glow ritual rating"
+          }
+        },
+        {
+          "type": "result",
+          "settings": {
+            "value": "3 min",
+            "label": "to add a premium moment to your routine"
+          }
+        },
+        {
+          "type": "benefit"
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "02",
+            "title": "Refreshed morning skin",
+            "text": "Support a cooler, calmer, more awake-looking complexion."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "03",
+            "title": "Luxury shelf appeal",
+            "text": "Make the product feel giftable, intentional and premium."
+          }
+        },
+        {
+          "type": "protocol"
+        },
+        {
+          "type": "protocol",
+          "settings": {
+            "title": "Glide",
+            "text": "Move slowly across the face, following natural contours and pressure guidance."
+          }
+        },
+        {
+          "type": "protocol",
+          "settings": {
+            "title": "Glow",
+            "text": "Finish with SPF by day or a barrier-supporting moisturizer by night."
+          }
+        },
+        {
+          "type": "proof"
+        },
+        {
+          "type": "proof",
+          "settings": {
+            "badge": "Before and after",
+            "title": "Add result-led proof",
+            "text": "Upload customer-safe before-and-after visuals with realistic claims."
+          }
+        },
+        {
+          "type": "proof",
+          "settings": {
+            "badge": "Routine shelfie",
+            "title": "Sell the lifestyle",
+            "text": "Show the product in bathrooms, vanities, travel bags and self-care routines."
+          }
+        },
+        {
+          "type": "faq"
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Can I edit the content?",
+            "answer": "<p>Yes. All images, copy, stats, FAQ answers and sticky add-to-cart labels are editable in the Shopify Theme Editor.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

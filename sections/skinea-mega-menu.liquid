@@ -1,0 +1,601 @@
+{% liquid
+  assign category_blocks = section.blocks | where: 'type', 'category'
+%}
+
+<section
+  id="SkineaMegaMenu-{{ section.id }}"
+  class="skinea-menu{% if section.settings.enable_sticky %} skinea-menu--sticky{% endif %}"
+  style="
+    --skinea-menu-accent: {{ section.settings.accent_color }};
+    --skinea-menu-accent-2: {{ section.settings.secondary_accent_color }};
+    --skinea-menu-ink: {{ section.settings.text_color }};
+  "
+>
+  {% if section.settings.announcement != blank %}
+    <div class="skinea-menu__announcement">{{ section.settings.announcement | escape }}</div>
+  {% endif %}
+
+  <div class="skinea-menu__bar">
+    <a class="skinea-menu__brand" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+      {% if section.settings.logo_image != blank %}
+        {{
+          section.settings.logo_image
+          | image_url: width: 320
+          | image_tag:
+            widths: '120, 180, 240, 320',
+            sizes: '160px',
+            loading: 'eager'
+        }}
+      {% else %}
+        <span>{{ section.settings.logo_text | default: shop.name | escape }}</span>
+      {% endif %}
+    </a>
+
+    <nav class="skinea-menu__desktop" aria-label="Main navigation">
+      {% if section.settings.menu != blank %}
+        {% for link in section.settings.menu.links %}
+          <a href="{{ link.url }}">{{ link.title | escape }}</a>
+        {% endfor %}
+      {% endif %}
+
+      {% if category_blocks.size > 0 %}
+        <details class="skinea-menu__details">
+          <summary>{{ section.settings.mega_menu_label | escape }}</summary>
+          <div class="skinea-menu__panel">
+            <div class="skinea-menu__panel-copy">
+              {% if section.settings.panel_eyebrow != blank %}
+                <p>{{ section.settings.panel_eyebrow | escape }}</p>
+              {% endif %}
+              {% if section.settings.panel_heading != blank %}
+                <h2>{{ section.settings.panel_heading | escape }}</h2>
+              {% endif %}
+              {% if section.settings.panel_text != blank %}
+                <span>{{ section.settings.panel_text | escape }}</span>
+              {% endif %}
+            </div>
+
+            <div class="skinea-menu__categories">
+              {% for block in category_blocks %}
+                <a class="skinea-menu__category" href="{{ block.settings.link | default: routes.all_products_collection_url }}" {{ block.shopify_attributes }}>
+                  <div class="skinea-menu__category-media">
+                    {% if block.settings.image != blank %}
+                      {{
+                        block.settings.image
+                        | image_url: width: 600
+                        | image_tag:
+                          widths: '220, 360, 480, 600',
+                          sizes: '220px',
+                          loading: 'lazy'
+                      }}
+                    {% else %}
+                      {{ 'collection-1' | placeholder_svg_tag: 'skinea-menu__placeholder' }}
+                    {% endif %}
+                    {% if block.settings.badge != blank %}
+                      <span>{{ block.settings.badge | escape }}</span>
+                    {% endif %}
+                  </div>
+                  <strong>{{ block.settings.title | escape }}</strong>
+                  {% if block.settings.text != blank %}
+                    <small>{{ block.settings.text | escape }}</small>
+                  {% endif %}
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        </details>
+      {% endif %}
+    </nav>
+
+    {% if section.settings.cta_label != blank %}
+      <a class="skinea-menu__cta" href="{{ section.settings.cta_link | default: routes.all_products_collection_url }}">
+        {{ section.settings.cta_label | escape }}
+      </a>
+    {% endif %}
+
+    <details class="skinea-menu__mobile">
+      <summary aria-label="Open menu">
+        <span></span>
+        <span></span>
+      </summary>
+      <div class="skinea-menu__mobile-panel">
+        {% if section.settings.menu != blank %}
+          {% for link in section.settings.menu.links %}
+            <a href="{{ link.url }}">{{ link.title | escape }}</a>
+          {% endfor %}
+        {% endif %}
+        {% for block in category_blocks %}
+          <a href="{{ block.settings.link | default: routes.all_products_collection_url }}" {{ block.shopify_attributes }}>
+            {{ block.settings.title | escape }}
+          </a>
+        {% endfor %}
+        {% if section.settings.cta_label != blank %}
+          <a href="{{ section.settings.cta_link | default: routes.all_products_collection_url }}">{{ section.settings.cta_label | escape }}</a>
+        {% endif %}
+      </div>
+    </details>
+  </div>
+</section>
+
+{% stylesheet %}
+  .skinea-menu {
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom: 0.1rem solid rgba(71, 42, 66, 0.08);
+    color: var(--skinea-menu-ink);
+    position: relative;
+    z-index: 30;
+  }
+
+  .skinea-menu--sticky {
+    position: sticky;
+    top: 0;
+  }
+
+  .skinea-menu * {
+    box-sizing: border-box;
+  }
+
+  .skinea-menu a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .skinea-menu__announcement {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--skinea-menu-accent) 20%, #fff), color-mix(in srgb, var(--skinea-menu-accent-2) 16%, #fff));
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.8rem 1.6rem;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .skinea-menu__bar {
+    align-items: center;
+    display: grid;
+    gap: 1.6rem;
+    grid-template-columns: auto 1fr auto auto;
+    margin: 0 auto;
+    max-width: 132rem;
+    min-height: 7.2rem;
+    padding: 0 1.6rem;
+  }
+
+  .skinea-menu__brand {
+    align-items: center;
+    display: inline-flex;
+    font-family: var(--font-heading-family);
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    min-width: 10rem;
+  }
+
+  .skinea-menu__brand img {
+    display: block;
+    height: auto;
+    max-width: 16rem;
+  }
+
+  .skinea-menu__desktop {
+    align-items: center;
+    display: none;
+    gap: 2rem;
+    justify-content: center;
+  }
+
+  .skinea-menu__desktop > a,
+  .skinea-menu__details summary,
+  .skinea-menu__cta,
+  .skinea-menu__mobile-panel a {
+    font-size: 1.38rem;
+    font-weight: 750;
+  }
+
+  .skinea-menu__desktop > a,
+  .skinea-menu__details summary {
+    color: color-mix(in srgb, var(--skinea-menu-ink) 72%, #fff);
+    transition: color 160ms ease;
+  }
+
+  .skinea-menu__desktop > a:hover,
+  .skinea-menu__details summary:hover {
+    color: var(--skinea-menu-ink);
+  }
+
+  .skinea-menu__details {
+    position: static;
+  }
+
+  .skinea-menu__details summary {
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .skinea-menu__details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .skinea-menu__panel {
+    background: rgba(255, 255, 255, 0.96);
+    border: 0.1rem solid rgba(71, 42, 66, 0.08);
+    border-radius: 3rem;
+    box-shadow: 0 2.6rem 7rem rgba(71, 42, 66, 0.14);
+    display: grid;
+    gap: 2.4rem;
+    grid-template-columns: 0.75fr 1.25fr;
+    left: 50%;
+    max-width: 112rem;
+    opacity: 0;
+    padding: 2rem;
+    pointer-events: none;
+    position: absolute;
+    top: calc(100% + 1.2rem);
+    transform: translateX(-50%) translateY(1rem);
+    transition: opacity 180ms ease, transform 180ms ease;
+    width: calc(100vw - 3.2rem);
+  }
+
+  .skinea-menu__details[open] .skinea-menu__panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .skinea-menu__panel-copy {
+    background:
+      radial-gradient(circle at 0 0, color-mix(in srgb, var(--skinea-menu-accent) 22%, transparent), transparent 28rem),
+      linear-gradient(145deg, #fff, color-mix(in srgb, var(--skinea-menu-accent-2) 10%, #fff));
+    border-radius: 2.4rem;
+    padding: 2.4rem;
+  }
+
+  .skinea-menu__panel-copy p {
+    color: color-mix(in srgb, var(--skinea-menu-accent-2) 72%, var(--skinea-menu-ink));
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    margin: 0 0 1.2rem;
+    text-transform: uppercase;
+  }
+
+  .skinea-menu__panel-copy h2 {
+    font-family: var(--font-heading-family);
+    font-size: clamp(3.2rem, 4vw, 5.4rem);
+    letter-spacing: -0.055em;
+    line-height: 0.98;
+    margin: 0;
+  }
+
+  .skinea-menu__panel-copy span {
+    color: color-mix(in srgb, var(--skinea-menu-ink) 62%, #fff);
+    display: block;
+    font-size: 1.45rem;
+    line-height: 1.6;
+    margin-top: 1.6rem;
+  }
+
+  .skinea-menu__categories {
+    display: grid;
+    gap: 1.2rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .skinea-menu__category {
+    border-radius: 2rem;
+    display: block;
+    padding: 0.8rem;
+    transition: background 160ms ease, transform 160ms ease;
+  }
+
+  .skinea-menu__category:hover {
+    background: color-mix(in srgb, var(--skinea-menu-accent) 10%, #fff);
+    transform: translateY(-0.2rem);
+  }
+
+  .skinea-menu__category-media {
+    aspect-ratio: 1 / 1.08;
+    background: color-mix(in srgb, var(--skinea-menu-accent) 10%, #fff);
+    border-radius: 1.6rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .skinea-menu__category-media img,
+  .skinea-menu__category-media svg {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  .skinea-menu__category-media span {
+    background: rgba(255, 255, 255, 0.84);
+    border-radius: 999rem;
+    bottom: 0.8rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+    left: 0.8rem;
+    padding: 0.5rem 0.8rem;
+    position: absolute;
+  }
+
+  .skinea-menu__category strong {
+    display: block;
+    font-size: 1.45rem;
+    line-height: 1.2;
+    margin-top: 1rem;
+  }
+
+  .skinea-menu__category small {
+    color: color-mix(in srgb, var(--skinea-menu-ink) 58%, #fff);
+    display: block;
+    font-size: 1.2rem;
+    line-height: 1.35;
+    margin-top: 0.3rem;
+  }
+
+  .skinea-menu__cta {
+    background: linear-gradient(135deg, var(--skinea-menu-accent), var(--skinea-menu-accent-2));
+    border-radius: 999rem;
+    color: #fff;
+    display: none;
+    padding: 1.1rem 1.7rem;
+    transition: box-shadow 160ms ease, transform 160ms ease;
+  }
+
+  .skinea-menu__cta:hover {
+    box-shadow: 0 1.6rem 4rem rgba(71, 42, 66, 0.16);
+    transform: translateY(-0.2rem);
+  }
+
+  .skinea-menu__mobile {
+    justify-self: end;
+  }
+
+  .skinea-menu__mobile summary {
+    align-items: center;
+    background: color-mix(in srgb, var(--skinea-menu-accent) 12%, #fff);
+    border-radius: 999rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 4.4rem;
+    justify-content: center;
+    list-style: none;
+    width: 4.4rem;
+  }
+
+  .skinea-menu__mobile summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .skinea-menu__mobile summary span {
+    background: var(--skinea-menu-ink);
+    border-radius: 999rem;
+    display: block;
+    height: 0.2rem;
+    width: 1.8rem;
+  }
+
+  .skinea-menu__mobile-panel {
+    background: #fff;
+    border: 0.1rem solid rgba(71, 42, 66, 0.08);
+    border-radius: 2rem;
+    box-shadow: 0 2rem 6rem rgba(71, 42, 66, 0.14);
+    display: grid;
+    gap: 0.4rem;
+    padding: 1rem;
+    position: absolute;
+    right: 1.6rem;
+    top: calc(100% + 0.8rem);
+    width: min(32rem, calc(100vw - 3.2rem));
+  }
+
+  .skinea-menu__mobile-panel a {
+    border-radius: 1.2rem;
+    padding: 1.2rem;
+  }
+
+  .skinea-menu__mobile-panel a:hover {
+    background: color-mix(in srgb, var(--skinea-menu-accent) 10%, #fff);
+  }
+
+  .skinea-menu__placeholder {
+    background: color-mix(in srgb, var(--skinea-menu-accent) 10%, #fff);
+    fill: color-mix(in srgb, var(--skinea-menu-accent-2) 34%, #fff);
+  }
+
+  @media screen and (min-width: 990px) {
+    .skinea-menu__desktop,
+    .skinea-menu__cta {
+      display: flex;
+    }
+
+    .skinea-menu__mobile {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .skinea-menu__bar {
+      grid-template-columns: auto 1fr auto;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Skinea mega menu",
+  "tag": "section",
+  "class": "section",
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_image",
+      "label": "Logo image"
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo text",
+      "default": "Skinea"
+    },
+    {
+      "type": "text",
+      "id": "announcement",
+      "label": "Announcement",
+      "default": "Premium skincare technology for lifted, refreshed, glowing skin"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky",
+      "label": "Keep menu sticky",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Pink accent",
+      "default": "#f0a8c8"
+    },
+    {
+      "type": "color",
+      "id": "secondary_accent_color",
+      "label": "Purple accent",
+      "default": "#9a78ff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#251824"
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu"
+    },
+    {
+      "type": "text",
+      "id": "mega_menu_label",
+      "label": "Mega menu label",
+      "default": "Shop by concern"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Mega menu panel"
+    },
+    {
+      "type": "text",
+      "id": "panel_eyebrow",
+      "label": "Eyebrow",
+      "default": "Find your ritual"
+    },
+    {
+      "type": "text",
+      "id": "panel_heading",
+      "label": "Heading",
+      "default": "Shop results, not just tools"
+    },
+    {
+      "type": "textarea",
+      "id": "panel_text",
+      "label": "Text",
+      "default": "Guide customers through concerns like puffiness, sculpting, anti-aging, glow and recovery with editorial imagery."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category image link",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Puffiness"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Cool, refresh and awaken tired skin."
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge",
+          "default": "Morning ritual"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Skinea mega menu",
+      "blocks": [
+        {
+          "type": "category"
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Sculpting",
+            "text": "Define the look of cheeks and jawline.",
+            "badge": "Lift ritual"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Anti-aging",
+            "text": "Support smoother-looking skin rituals.",
+            "badge": "Skin tech"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Glow",
+            "text": "Prep skin for a radiant finish.",
+            "badge": "Best seller"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

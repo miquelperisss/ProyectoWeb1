@@ -1,0 +1,624 @@
+{% liquid
+  assign bundle_blocks = section.blocks | where: 'type', 'bundle'
+%}
+
+<section
+  id="SkineaBundleOffers-{{ section.id }}"
+  class="skinea-bundles"
+  style="
+    --skinea-bundles-text: {{ section.settings.text_color }};
+    --skinea-bundles-pink: {{ section.settings.pink_accent }};
+    --skinea-bundles-purple: {{ section.settings.purple_accent }};
+    --skinea-bundles-soft: {{ section.settings.soft_background }};
+  "
+>
+  <div class="skinea-bundles__header">
+    <div>
+      {% if section.settings.eyebrow != blank %}
+        <p class="skinea-bundles__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2>{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+    </div>
+
+    {% if section.settings.text != blank %}
+      <div class="skinea-bundles__text">{{ section.settings.text }}</div>
+    {% endif %}
+  </div>
+
+  {% if bundle_blocks.size > 0 %}
+    <div class="skinea-bundles__grid">
+      {% for block in bundle_blocks %}
+        {% liquid
+          assign card_product = block.settings.product
+          assign selected_variant = card_product.selected_or_first_available_variant
+        %}
+
+        <article class="skinea-bundles__card{% if block.settings.highlight_card %} skinea-bundles__card--highlight{% endif %}" {{ block.shopify_attributes }}>
+          <div class="skinea-bundles__media">
+            {% if block.settings.best_value_badge != blank %}
+              <span class="skinea-bundles__badge skinea-bundles__badge--value">
+                {{ block.settings.best_value_badge | escape }}
+              </span>
+            {% endif %}
+
+            {% if block.settings.save_badge != blank %}
+              <span class="skinea-bundles__badge skinea-bundles__badge--save">
+                {{ block.settings.save_badge | escape }}
+              </span>
+            {% endif %}
+
+            {% if block.settings.image != blank %}
+              {{
+                block.settings.image
+                | image_url: width: 900
+                | image_tag:
+                  widths: '320, 480, 640, 900',
+                  sizes: '(min-width: 990px) 30vw, 84vw',
+                  loading: 'lazy'
+              }}
+            {% elsif card_product.featured_image != blank %}
+              {{
+                card_product.featured_image
+                | image_url: width: 900
+                | image_tag:
+                  widths: '320, 480, 640, 900',
+                  sizes: '(min-width: 990px) 30vw, 84vw',
+                  loading: 'lazy'
+              }}
+            {% else %}
+              {{ 'product-1' | placeholder_svg_tag: 'skinea-bundles__placeholder' }}
+            {% endif %}
+          </div>
+
+          <div class="skinea-bundles__content">
+            {% if block.settings.title != blank %}
+              <h3>{{ block.settings.title | escape }}</h3>
+            {% elsif card_product.title != blank %}
+              <h3>{{ card_product.title | escape }}</h3>
+            {% endif %}
+
+            {% if block.settings.description != blank %}
+              <p class="skinea-bundles__description">{{ block.settings.description | escape }}</p>
+            {% endif %}
+
+            {% if block.settings.includes != blank %}
+              <p class="skinea-bundles__includes">{{ block.settings.includes | escape }}</p>
+            {% endif %}
+
+            <div class="skinea-bundles__price-row">
+              {% if block.settings.compare_price != blank %}
+                <span class="skinea-bundles__compare">{{ block.settings.compare_price | escape }}</span>
+              {% elsif card_product.compare_at_price > card_product.price %}
+                <span class="skinea-bundles__compare">{{ card_product.compare_at_price | money }}</span>
+              {% endif %}
+
+              {% if block.settings.sale_price != blank %}
+                <span class="skinea-bundles__sale">{{ block.settings.sale_price | escape }}</span>
+              {% elsif card_product.price != blank %}
+                <span class="skinea-bundles__sale">{{ card_product.price | money }}</span>
+              {% endif %}
+            </div>
+
+            {% if block.settings.savings_text != blank %}
+              <p class="skinea-bundles__savings">{{ block.settings.savings_text | escape }}</p>
+            {% endif %}
+
+            {% if card_product != blank and selected_variant != blank %}
+              {% form 'product', card_product, class: 'skinea-bundles__form' %}
+                <input type="hidden" name="id" value="{{ selected_variant.id }}">
+                <button type="submit" class="skinea-bundles__button" {% unless selected_variant.available %}disabled{% endunless %}>
+                  {% if selected_variant.available %}
+                    {{ block.settings.button_label | default: section.settings.default_button_label | escape }}
+                  {% else %}
+                    {{ section.settings.sold_out_label | escape }}
+                  {% endif %}
+                </button>
+              {% endform %}
+            {% elsif block.settings.link != blank %}
+              <a class="skinea-bundles__button" href="{{ block.settings.link }}">
+                {{ block.settings.button_label | default: section.settings.default_button_label | escape }}
+              </a>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+
+{% stylesheet %}
+  .skinea-bundles {
+    background:
+      radial-gradient(circle at 10% 0, var(--skinea-bundles-soft) 0, transparent 34rem),
+      #ffffff;
+    color: var(--skinea-bundles-text);
+    overflow: hidden;
+    padding: clamp(4rem, 8vw, 9rem) clamp(1.4rem, 5vw, 6rem);
+  }
+
+  .skinea-bundles * {
+    box-sizing: border-box;
+  }
+
+  .skinea-bundles a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .skinea-bundles__header {
+    align-items: end;
+    animation: skinea-bundles-rise 700ms ease both;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0 auto;
+    max-width: 128rem;
+  }
+
+  .skinea-bundles__eyebrow {
+    color: var(--skinea-bundles-purple);
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    margin: 0 0 1.4rem;
+    text-transform: uppercase;
+  }
+
+  .skinea-bundles h2 {
+    color: var(--skinea-bundles-text);
+    font-family: var(--font-heading-family);
+    font-size: clamp(3.4rem, 6vw, 7.2rem);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 0.98;
+    margin: 0;
+    max-width: 11ch;
+  }
+
+  .skinea-bundles__text {
+    color: rgba(37, 24, 36, 0.66);
+    font-size: clamp(1.55rem, 1.7vw, 1.95rem);
+    line-height: 1.65;
+    max-width: 58rem;
+  }
+
+  .skinea-bundles__text p {
+    margin: 0;
+  }
+
+  .skinea-bundles__grid {
+    display: grid;
+    gap: 1.4rem;
+    grid-template-columns: minmax(0, 1fr);
+    margin: clamp(2.8rem, 5vw, 4.6rem) auto 0;
+    max-width: 128rem;
+  }
+
+  .skinea-bundles__card {
+    animation: skinea-bundles-card 700ms ease both;
+    background: rgba(255, 255, 255, 0.94);
+    border: 0.1rem solid rgba(37, 24, 36, 0.08);
+    border-radius: 2.8rem;
+    box-shadow: 0 1.8rem 5.5rem rgba(37, 24, 36, 0.08);
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow 220ms ease, transform 220ms ease;
+  }
+
+  .skinea-bundles__card--highlight {
+    border-color: color-mix(in srgb, var(--skinea-bundles-purple) 38%, rgba(37, 24, 36, 0.08));
+    box-shadow: 0 2.6rem 7rem rgba(154, 120, 255, 0.16);
+  }
+
+  .skinea-bundles__card:hover {
+    box-shadow: 0 2.8rem 7rem rgba(37, 24, 36, 0.14);
+    transform: translateY(-0.45rem);
+  }
+
+  .skinea-bundles__media {
+    aspect-ratio: 1 / 1;
+    background:
+      radial-gradient(circle at 50% 20%, var(--skinea-bundles-soft) 0, transparent 62%),
+      #ffffff;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .skinea-bundles__media img,
+  .skinea-bundles__media svg {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 420ms ease;
+    width: 100%;
+  }
+
+  .skinea-bundles__card:hover .skinea-bundles__media img,
+  .skinea-bundles__card:hover .skinea-bundles__media svg {
+    transform: scale(1.04);
+  }
+
+  .skinea-bundles__badge {
+    backdrop-filter: blur(1.4rem);
+    border-radius: 999rem;
+    font-size: 1.08rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 0.7rem 1rem;
+    position: absolute;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+
+  .skinea-bundles__badge--value {
+    background: linear-gradient(135deg, var(--skinea-bundles-pink), var(--skinea-bundles-purple));
+    color: #ffffff;
+    left: 1.2rem;
+    top: 1.2rem;
+  }
+
+  .skinea-bundles__badge--save {
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--skinea-bundles-text);
+    right: 1.2rem;
+    top: 1.2rem;
+  }
+
+  .skinea-bundles__content {
+    display: flex;
+    flex-direction: column;
+    min-height: 28rem;
+    padding: 1.8rem;
+  }
+
+  .skinea-bundles h3 {
+    font-family: var(--font-heading-family);
+    font-size: clamp(2.2rem, 2.6vw, 3.2rem);
+    letter-spacing: -0.045em;
+    line-height: 1.05;
+    margin: 0;
+  }
+
+  .skinea-bundles__description,
+  .skinea-bundles__includes,
+  .skinea-bundles__savings {
+    color: rgba(37, 24, 36, 0.62);
+    font-size: 1.38rem;
+    line-height: 1.55;
+    margin: 0.8rem 0 0;
+  }
+
+  .skinea-bundles__includes {
+    color: rgba(37, 24, 36, 0.76);
+    font-weight: 700;
+  }
+
+  .skinea-bundles__price-row {
+    align-items: baseline;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1.6rem;
+  }
+
+  .skinea-bundles__compare {
+    color: rgba(37, 24, 36, 0.42);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: line-through;
+  }
+
+  .skinea-bundles__sale {
+    color: var(--skinea-bundles-text);
+    font-size: clamp(2.4rem, 3vw, 3.4rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .skinea-bundles__savings {
+    color: var(--skinea-bundles-purple);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  .skinea-bundles__form {
+    margin: auto 0 0;
+  }
+
+  .skinea-bundles__button {
+    align-items: center;
+    background: linear-gradient(135deg, var(--skinea-bundles-pink), var(--skinea-bundles-purple));
+    border: 0;
+    border-radius: 999rem;
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-size: 1.4rem;
+    font-weight: 800;
+    justify-content: center;
+    margin-top: auto;
+    min-height: 4.8rem;
+    padding: 0 2rem;
+    transition: box-shadow 180ms ease, transform 180ms ease;
+    width: 100%;
+  }
+
+  .skinea-bundles__button:hover {
+    box-shadow: 0 1.6rem 4.2rem rgba(37, 24, 36, 0.16);
+    transform: translateY(-0.2rem);
+  }
+
+  .skinea-bundles__button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .skinea-bundles__placeholder {
+    background: var(--skinea-bundles-soft);
+    fill: var(--skinea-bundles-pink);
+  }
+
+  @keyframes skinea-bundles-rise {
+    from {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes skinea-bundles-card {
+    from {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .skinea-bundles__header {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+
+    .skinea-bundles__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .skinea-bundles {
+      padding-inline: 1.4rem;
+    }
+
+    .skinea-bundles__grid {
+      display: flex;
+      gap: 1.4rem;
+      margin-inline: -1.4rem;
+      overflow-x: auto;
+      padding: 0.4rem 1.4rem 2rem;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .skinea-bundles__grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .skinea-bundles__card {
+      flex: 0 0 84vw;
+      scroll-snap-align: start;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Skinea bundles",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Skinea ritual bundles"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Build your premium glow routine"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Curated skincare technology bundles make it easy to choose the best ritual, save more and feel confident at checkout.</p>"
+    },
+    {
+      "type": "text",
+      "id": "default_button_label",
+      "label": "Default button label",
+      "default": "Add bundle to bag"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_label",
+      "label": "Sold out label",
+      "default": "Sold out"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#251824"
+    },
+    {
+      "type": "color",
+      "id": "pink_accent",
+      "label": "Soft pink accent",
+      "default": "#f0a8c8"
+    },
+    {
+      "type": "color",
+      "id": "purple_accent",
+      "label": "Soft purple accent",
+      "default": "#9a78ff"
+    },
+    {
+      "type": "color",
+      "id": "soft_background",
+      "label": "Soft background glow",
+      "default": "#fff4fa"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "bundle",
+      "name": "Bundle card",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Bundle product"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Override image"
+        },
+        {
+          "type": "checkbox",
+          "id": "highlight_card",
+          "label": "Highlight card",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "best_value_badge",
+          "label": "Best value badge",
+          "default": "Best value"
+        },
+        {
+          "type": "text",
+          "id": "save_badge",
+          "label": "Save money badge",
+          "default": "Save 20%"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Glow starter bundle"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "A premium daily ritual for refreshed, sculpted-looking skin."
+        },
+        {
+          "type": "textarea",
+          "id": "includes",
+          "label": "Includes text",
+          "default": "Includes 2 Skinea skincare tools"
+        },
+        {
+          "type": "text",
+          "id": "compare_price",
+          "label": "Compare-at price",
+          "default": "$178"
+        },
+        {
+          "type": "text",
+          "id": "sale_price",
+          "label": "Sale price",
+          "default": "$139"
+        },
+        {
+          "type": "text",
+          "id": "savings_text",
+          "label": "Savings text",
+          "default": "You save $39"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Add bundle to bag"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Fallback link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Skinea bundles",
+      "blocks": [
+        {
+          "type": "bundle",
+          "settings": {
+            "title": "Glow starter bundle",
+            "description": "A premium daily ritual for refreshed, sculpted-looking skin.",
+            "includes": "Includes 2 Skinea skincare tools",
+            "compare_price": "$178",
+            "sale_price": "$139",
+            "savings_text": "You save $39",
+            "save_badge": "Save 22%"
+          }
+        },
+        {
+          "type": "bundle",
+          "settings": {
+            "highlight_card": true,
+            "title": "Complete facial ritual",
+            "description": "The high-conversion hero bundle for lifting, glow and recovery routines.",
+            "includes": "Includes 3 Skinea skincare tools",
+            "compare_price": "$267",
+            "sale_price": "$199",
+            "savings_text": "You save $68",
+            "save_badge": "Save 25%"
+          }
+        },
+        {
+          "type": "bundle",
+          "settings": {
+            "title": "Recovery night set",
+            "description": "A calming self-care bundle for evening recovery and de-puffing rituals.",
+            "includes": "Includes 2 Skinea recovery tools",
+            "compare_price": "$158",
+            "sale_price": "$119",
+            "savings_text": "You save $39",
+            "save_badge": "Save 24%"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
