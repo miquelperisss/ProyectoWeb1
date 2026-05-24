@@ -1,0 +1,9 @@
+/* Dawn quantity controls are primarily defined in base.css. This file keeps legacy cart templates that load component-quantity.css styled and valid. */
+.quantity {
+  color: rgba(var(--color-foreground), 0.75);
+  position: relative;
+  width: calc(14rem / var(--font-body-scale) + var(--inputs-border-width) * 2);
+  display: flex;
+  border-radius: var(--inputs-radius);
+  min-height: calc((var(--inputs-border-width) * 2) + 4.5rem);
+}
