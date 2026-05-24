@@ -25,6 +25,11 @@ function getShopifyRoot() {
   return window.Shopify && Shopify.routes ? Shopify.routes.root : '/';
 }
 
+function getForeFunnyShopName() {
+  const section = document.querySelector('[data-fore-funny-section]');
+  return section && section.dataset.shopName ? section.dataset.shopName : 'Fore & Funny™';
+}
+
 function getSelectedVariant() {
   const selectedOption = document.querySelector('.pack-option.selected');
 
@@ -55,7 +60,7 @@ function updateForeFunnyButtons(variant) {
   }
 
   if (stickyText) {
-    stickyText.innerHTML = `Fore & Funny™ Golf Tees — <strong>Pack ${packLabel} desde ${price}</strong>`;
+    stickyText.innerHTML = `${getForeFunnyShopName()} Golf Tees — <strong>Pack ${packLabel} desde ${price}</strong>`;
   }
 
   if (variantSelect && variant) {

@@ -4,7 +4,7 @@
 <section class="cart-page" data-cart-page>
   <header class="cart-page__header">
     <a class="cart-page__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }} home">
-      Fore & <span>Funny</span>™
+      {{ shop.name | escape }}
     </a>
     {% render 'cart-icon-bubble' %}
   </header>
@@ -24,7 +24,7 @@
       {% unless cart == empty %}hidden{% endunless %}
     >
       <h2>Your cart is empty</h2>
-      <p>Add your favorite Fore & Funny™ golf tee pack and come back when you are ready to checkout.</p>
+      <p>Add your favorite {{ shop.name | escape }} product and come back when you are ready to checkout.</p>
       <a class="cart-button cart-button--primary" href="{{ routes.all_products_collection_url }}">Continue Shopping</a>
     </div>
 
@@ -55,7 +55,7 @@
                   loading="lazy"
                 >
               {% else %}
-                <div class="cart-item__placeholder" aria-hidden="true">Fore & Funny™</div>
+                <div class="cart-item__placeholder" aria-hidden="true">{{ shop.name | escape }}</div>
               {% endif %}
             </a>
 

@@ -14,9 +14,9 @@
   assign shipping_threshold = settings.fore_funny_shipping_threshold | default: '$60 AUD'
 %}
 
-<div data-fore-funny-section="{{ section.id }}">
+<div data-fore-funny-section="{{ section.id }}" data-shop-name="{{ shop.name | default: 'Fore & Funny™' | escape }}">
   <div class="sticky-atc" id="stickyAtc">
-    <div class="sticky-atc-text">Fore & Funny™ Golf Tees — <strong>Pack ×50 desde {{ product.price_min | money }} AUD</strong></div>
+    <div class="sticky-atc-text">{{ shop.name | default: 'Fore & Funny™' | escape }} Golf Tees — <strong>Pack ×50 desde {{ product.price_min | money }} AUD</strong></div>
     <button class="sticky-atc-btn" type="button">Add to Cart</button>
   </div>
 
