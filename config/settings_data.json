@@ -5,6 +5,19 @@
     "fore_funny_sold_count": "12K+",
     "fore_funny_rating": "4.9",
     "fore_funny_review_count": "847",
-    "fore_funny_shipping_threshold": "$60 AUD"
+    "fore_funny_shipping_threshold": "$60 AUD",
+    "color_schemes": {
+      "scheme-1": {
+        "settings": {
+          "background": "#ffffff",
+          "background_gradient": "",
+          "text": "#121212",
+          "button": "#121212",
+          "button_label": "#ffffff",
+          "secondary_button_label": "#121212",
+          "shadow": "#121212"
+        }
+      }
+    }
   }
 }
