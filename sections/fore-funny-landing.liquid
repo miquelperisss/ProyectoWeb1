@@ -1,7 +1,20 @@
 {% assign product = section.settings.product %}
-{% assign hero_img = product.images | where: "alt", "hero" | first %}
-{% assign gift_img = product.images | where: "alt", "gift" | first %}
-{% assign lifestyle_img = product.images | where: "alt", "lifestyle" | first %}
+{% if product == blank %}
+  {% assign product = collections.all.products | first %}
+{% endif %}
+{% assign selected_variant = product.selected_or_first_available_variant %}
+{% if product != blank %}
+  {% for variant in product.variants %}
+    {% assign variant_pack_size = variant.title | remove: '×' | remove: 'x' | remove: 'X' | remove: 'tees' | remove: 'Tee' | remove: 'Tees' | strip %}
+    {% if variant_pack_size == '50' %}
+      {% assign selected_variant = variant %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+  {% assign hero_img = product.images | where: "alt", "hero" | first %}
+  {% assign gift_img = product.images | where: "alt", "gift" | first %}
+  {% assign lifestyle_img = product.images | where: "alt", "lifestyle" | first %}
+{% endif %}
 {{ 'fore-funny.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'fore-funny.js' | asset_url }}" defer="defer"></script>
 
@@ -14,8 +27,17 @@
 
 <div data-fore-funny-section="{{ section.id }}" data-shop-name="{{ shop.name | default: 'Fore & Funny™' | escape }}">
   <div class="sticky-atc" id="stickyAtc">
-    <div class="sticky-atc-text">{{ shop.name | default: 'Fore & Funny™' | escape }} Golf Tees — <strong>Pack ×50 desde {{ product.price_min | money }} AUD</strong></div>
-    <button class="sticky-atc-btn" type="button">Add to Cart</button>
+    <div class="sticky-atc-text">
+      {{ shop.name | default: 'Fore & Funny™' | escape }} Golf Tees —
+      <strong>
+        {% if product != blank %}
+          Pack ×50 desde {{ product.price_min | money }} AUD
+        {% else %}
+          Select a product
+        {% endif %}
+      </strong>
+    </div>
+    <button class="sticky-atc-btn" type="button" {% if product == blank %}disabled{% endif %}>Add to Cart</button>
   </div>
 
   <section class="hero" style="padding:0;">
@@ -62,15 +84,18 @@
   </div>
 
   <section class="product-section" id="product">
+    {% if product != blank %}
     <div class="product-grid">
       <div class="product-gallery fade-in">
         <div class="main-image">
           <div class="main-image-inner">
-            <img src="{{ product.featured_image | image_url: width: 1000 }}"
-                 alt="{{ product.title }}"
-                 width="1000"
-                 height="1000"
-                 style="width:100%; height:100%; object-fit:contain;">
+            {% if product.featured_image %}
+              <img src="{{ product.featured_image | image_url: width: 1000 }}"
+                   alt="{{ product.title }}"
+                   width="1000"
+                   height="1000"
+                   style="width:100%; height:100%; object-fit:contain;">
+            {% endif %}
           </div>
           <div class="image-badge">Multicolor Pack</div>
         </div>
@@ -118,11 +143,11 @@
                 {% assign pack_before = '$38.00' %}
                 {% assign pack_save = 'Save 32%' %}
               {% endif %}
-              <div class="pack-option {% if forloop.index == 2 %}selected{% endif %}"
+              <div class="pack-option {% if variant.id == selected_variant.id %}selected{% endif %}"
                    data-variant-id="{{ variant.id }}"
                    data-price="{{ variant.price | money }}"
                    onclick="selectVariant(this)">
-                {% if forloop.index == 2 %}<div class="pack-popular">Most Popular</div>{% endif %}
+                {% if pack_size == '50' %}<div class="pack-popular">Most Popular</div>{% endif %}
                 <div class="pack-qty">× {{ pack_size }} tees</div>
                 <div class="pack-before" style="font-size:12px; color:#888; text-decoration:line-through; margin-top:4px;">{{ pack_before }}</div>
                 <div class="pack-price">{{ variant.price | money }}</div>
@@ -132,14 +157,14 @@
           </div>
           <select class="fore-funny-variant-select" name="id" style="display:none">
             {% for variant in product.variants %}
-              <option value="{{ variant.id }}" {% if forloop.index == 2 %}selected="selected"{% endif %}>{{ variant.title }}</option>
+              <option value="{{ variant.id }}" {% if variant.id == selected_variant.id %}selected="selected"{% endif %}>{{ variant.title }}</option>
             {% endfor %}
           </select>
           <button type="submit" name="add" class="atc-btn" id="mainAtc">
-            {% if product.selected_or_first_available_variant.available %}
-              Add to Cart — {{ product.selected_or_first_available_variant.price | money }} AUD
+            {% if selected_variant.available %}
+              Add to Cart — {{ selected_variant.price | money }} AUD
             {% else %}
-              Add to Cart — {{ product.selected_or_first_available_variant.price | money }} AUD
+              Sold Out — {{ selected_variant.price | money }} AUD
             {% endif %}
           </button>
           <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; font-size:13px; color:#888;">
@@ -155,6 +180,14 @@
         </div>
       </div>
     </div>
+    {% else %}
+      <div class="product-grid">
+        <div class="product-info fade-in" style="grid-column:1 / -1;">
+          <h2 class="product-name">Select a product</h2>
+          <p class="product-tagline">Choose a product in this section's settings to enable the landing page cart form.</p>
+        </div>
+      </div>
+    {% endif %}
   </section>
 
   <section class="features-section fade-in">
