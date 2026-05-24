@@ -170,7 +170,7 @@
         const prices = row.querySelectorAll(selectors.linePrice);
 
         if (input) input.value = item.quantity;
-        if (minus) minus.disabled = item.quantity <= 1;
+        if (minus) minus.disabled = item.quantity <= 0;
         prices.forEach((price) => {
           price.textContent = this.formatMoney(item.final_line_price, cart.currency);
         });
@@ -231,7 +231,7 @@
       if (!loading) {
         const input = row.querySelector(selectors.quantityInput);
         const minus = row.querySelector(selectors.quantityMinus);
-        if (input && minus) minus.disabled = this.getInputQuantity(input) <= 1;
+        if (input && minus) minus.disabled = this.getInputQuantity(input) <= 0;
       }
     }
 
