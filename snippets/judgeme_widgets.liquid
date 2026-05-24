@@ -1,0 +1,18 @@
+{% doc %}
+Renders the Judge.me review widget container.
+@param {string} widget_type - Judge.me widget type
+@param {boolean} concierge_install - Whether Judge.me concierge install is enabled
+@param {product} product - Product for the review widget
+@example
+{% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
+{% enddoc %}
+
+{% if widget_type == 'judgeme_review_widget' and product != blank %}
+  <div
+    id="judgeme_product_reviews"
+    class="jdgm-widget jdgm-review-widget"
+    data-product-title="{{ product.title | escape }}"
+    data-id="{{ product.id }}"
+    data-auto-install="{{ concierge_install }}"
+  ></div>
+{% endif %}

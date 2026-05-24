@@ -1,0 +1,307 @@
+{% assign product = section.settings.product %}
+{% assign hero_img = product.images | where: "alt", "hero" | first %}
+{% assign gift_img = product.images | where: "alt", "gift" | first %}
+{% assign lifestyle_img = product.images | where: "alt", "lifestyle" | first %}
+{{ 'fore-funny.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'fore-funny.js' | asset_url }}" defer="defer"></script>
+
+{% liquid
+  assign hero_headline = settings.fore_funny_hero_headline | default: 'The only tee that makes you smile <em>before</em> your swing.'
+  assign hero_subheadline = settings.fore_funny_hero_subheadline | default: "Premium plastic golf tees with a twist. 3-inch height, perfect balance, and a design that'll get a laugh on any course."
+  assign sold_count = settings.fore_funny_sold_count | default: '12K+'
+  assign rating = settings.fore_funny_rating | default: '4.9'
+  assign review_count = settings.fore_funny_review_count | default: '847'
+  assign shipping_threshold = settings.fore_funny_shipping_threshold | default: '$60 AUD'
+%}
+
+<div data-fore-funny-section="{{ section.id }}">
+  <div class="sticky-atc" id="stickyAtc">
+    <div class="sticky-atc-text">Fore & Funny™ Golf Tees — <strong>Pack ×50 desde {{ product.price_min | money }} AUD</strong></div>
+    <button class="sticky-atc-btn" type="button">Add to Cart</button>
+  </div>
+
+  <section class="hero" style="padding:0;">
+    <nav class="hero-nav">
+      <div class="logo">Fore & <span>Funny</span>™</div>
+      <a href="{{ routes.cart_url }}" class="nav-cart" data-fore-funny-cart-link>🛒 Cart ({{ cart.item_count }})</a>
+    </nav>
+
+    <div class="hero-content">
+      <span class="hero-eyebrow">🏌️ The Golf Tee Reinvented</span>
+      <h1>{{ hero_headline }}</h1>
+      <p class="hero-sub">{{ hero_subheadline }}</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" type="button" onclick="document.getElementById('product').scrollIntoView({behavior:'smooth'})">Shop the Packs →</button>
+        <button class="btn-secondary" type="button" onclick="document.getElementById('gift').scrollIntoView({behavior:'smooth'})">Perfect as a gift</button>
+      </div>
+    </div>
+
+    <div class="hero-image" style="padding:0; overflow:hidden; position:relative;">
+      {% if hero_img %}
+        <img src="{{ hero_img | image_url: width: 1400 }}"
+             alt="{{ product.title }}"
+             width="1400"
+             height="1400"
+             style="width:100%; height:100%; object-fit:cover; object-position:center; display:block;">
+      {% elsif product.featured_image %}
+        <img src="{{ product.featured_image | image_url: width: 1400 }}"
+             alt="{{ product.title }}"
+             width="1400"
+             height="1400"
+             style="width:100%; height:100%; object-fit:cover; object-position:center; display:block;">
+      {% endif %}
+    </div>
+  </section>
+
+  <div class="proof-bar">
+    <div class="proof-item"><span class="stars">★★★★★</span> <strong>{{ rating }}/5</strong> — {{ review_count }} reviews</div>
+    <div class="proof-divider"></div>
+    <div class="proof-item">🚀 Over {{ sold_count }} packs sold worldwide</div>
+    <div class="proof-divider"></div>
+    <div class="proof-item">📦 Ships in 24h · Free over {{ shipping_threshold }}</div>
+    <div class="proof-divider"></div>
+    <div class="proof-item">✅ 30-day money back guarantee</div>
+  </div>
+
+  <section class="product-section" id="product">
+    <div class="product-grid">
+      <div class="product-gallery fade-in">
+        <div class="main-image">
+          <div class="main-image-inner">
+            <img src="{{ product.featured_image | image_url: width: 1000 }}"
+                 alt="{{ product.title }}"
+                 width="1000"
+                 height="1000"
+                 style="width:100%; height:100%; object-fit:contain;">
+          </div>
+          <div class="image-badge">Multicolor Pack</div>
+        </div>
+        <div class="thumbnails">
+          {% for image in product.images limit:4 %}
+            <div class="thumb {% if forloop.first %}active{% endif %}">
+              <img src="{{ image | image_url: width: 200 }}"
+                   alt="{{ product.title }}"
+                   width="200"
+                   height="200"
+                   style="width:100%; height:100%; object-fit:cover;">
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="product-info fade-in">
+        <div class="product-stars">
+          <span class="s">★★★★★</span>
+          <span>{{ rating }} · {{ review_count }} reviews</span>
+        </div>
+        <h2 class="product-name">{{ product.title }}</h2>
+        <p class="product-tagline">Plastic · 3-inch · Multicolor · Pack of your choice</p>
+
+        <script type="application/json" id="ForeFunnyProductData">
+          {
+            "variants": {% if product != blank %}{{ product.variants | json }}{% else %}[]{% endif %}
+          }
+        </script>
+
+        {% form 'product', product %}
+          <p class="pack-label">Choose your pack</p>
+          <div class="packs">
+            {% for variant in product.variants %}
+              {% liquid
+                assign pack_size = variant.title | remove: '×' | remove: 'x' | remove: 'X' | remove: 'tees' | remove: 'Tee' | remove: 'Tees' | strip
+                assign pack_before = '$8.00'
+                assign pack_save = 'Save 33%'
+                if pack_size contains '500'
+                  assign pack_before = '$320.00'
+                  assign pack_save = 'Save 38%'
+                elsif pack_size contains '100'
+                  assign pack_before = '$70.00'
+                  assign pack_save = 'Save 33%'
+                elsif pack_size contains '50'
+                  assign pack_before = '$38.00'
+                  assign pack_save = 'Save 32%'
+                endif
+              %}
+              <div class="pack-option {% if forloop.index == 2 %}selected{% endif %}"
+                   data-variant-id="{{ variant.id }}"
+                   data-price="{{ variant.price | money }}"
+                   onclick="selectVariant(this)">
+                {% if forloop.index == 2 %}<div class="pack-popular">Most Popular</div>{% endif %}
+                <div class="pack-qty">× {{ pack_size }} tees</div>
+                <div class="pack-before" style="font-size:12px; color:#888; text-decoration:line-through; margin-top:4px;">{{ pack_before }}</div>
+                <div class="pack-price">{{ variant.price | money }}</div>
+                <div class="pack-save" style="font-size:11px; color:#2d6b4a; font-weight:500; margin-top:2px;">{{ pack_save }}</div>
+              </div>
+            {% endfor %}
+          </div>
+          <select class="fore-funny-variant-select" name="id" style="display:none">
+            {% for variant in product.variants %}
+              <option value="{{ variant.id }}" {% if forloop.index == 2 %}selected="selected"{% endif %}>{{ variant.title }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" name="add" class="atc-btn" id="mainAtc">
+            {% if product.selected_or_first_available_variant.available %}
+              Add to Cart — {{ product.selected_or_first_available_variant.price | money }} AUD
+            {% else %}
+              Add to Cart — {{ product.selected_or_first_available_variant.price | money }} AUD
+            {% endif %}
+          </button>
+          <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; font-size:13px; color:#888;">
+            <span style="display:inline-block; width:8px; height:8px; background:#e85d75; border-radius:50%; animation: pulse 1.5s infinite;"></span>
+            <span id="viewerCount">23 people are viewing this right now</span>
+          </div>
+        {% endform %}
+
+        <div class="trust-row">
+          <div class="trust-item"><span class="trust-icon">🔒</span> Secure checkout</div>
+          <div class="trust-item"><span class="trust-icon">📦</span> Ships in 24h</div>
+          <div class="trust-item"><span class="trust-icon">↩️</span> 30-day returns</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section fade-in">
+    <div style="max-width:1100px; margin:0 auto;">
+      <div class="section-eyebrow">Why these tees</div>
+      <div class="section-title">Seriously good.<br><em>Seriously funny.</em></div>
+      {% if lifestyle_img %}
+        <div style="width:100%; max-width:960px; margin:0 auto 56px; border-radius:12px; overflow:hidden;">
+          <img src="{{ lifestyle_img | image_url: width: 1400 }}"
+               alt="Bikini lady golf tees on the course"
+               width="1400"
+               height="420"
+               style="width:100%; height:420px; object-fit:cover; object-position:center 60%;">
+        </div>
+      {% endif %}
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+          <div class="feature-title">Perfect 3-inch height</div>
+          <p class="feature-text">The ideal height for drivers and woods. Consistent ball position, consistent swing. The ladies hold it steady — every time.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="feature-title">Durable plastic</div>
+          <p class="feature-text">High-quality plastic that survives swing after swing. Lightweight, flexible, won't snap on impact. Outlasts cheap wooden tees by miles.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M12 2v20"/></svg></div>
+          <div class="feature-title">5 vibrant colors</div>
+          <p class="feature-text">Easy to spot in the grass. Each pack comes with a mix of colors so you'll always find your tee — and so will everyone on the fairway.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gift-section" id="gift">
+    <div class="gift-inner fade-in">
+      <div class="gift-content">
+        <div class="section-eyebrow">The perfect gift</div>
+        <div class="section-title">For the golfer who <em>already has everything.</em></div>
+        <p class="gift-text">They've got the clubs, the glove, the fancy rangefinder. But we guarantee they don't have these. Perfect for birthdays, Father's Day, bachelor parties — or honestly, just Tuesday.</p>
+        <div class="gift-tags">
+          <span class="gift-tag">🎂 Birthdays</span>
+          <span class="gift-tag">👔 Father's Day</span>
+          <span class="gift-tag">🥂 Bachelor Parties</span>
+          <span class="gift-tag">🎄 Christmas</span>
+          <span class="gift-tag">🏆 Golf Tournaments</span>
+        </div>
+        <button class="btn-primary" type="button" onclick="document.getElementById('product').scrollIntoView({behavior:'smooth'})">Shop Gift Packs →</button>
+      </div>
+      <div class="gift-visual" style="min-height:400px; overflow:hidden;">
+        {% if gift_img %}
+          <img src="{{ gift_img | image_url: width: 900 }}"
+               alt="Perfect golf gift"
+               width="900"
+               height="900"
+               style="width:100%; height:100%; object-fit:cover; object-position:center; display:block;">
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews section - will be replaced by Judge.me app widget -->
+  {% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
+
+  <section class="faq-section fade-in">
+    <div class="faq-inner">
+      <div style="text-align:center; margin-bottom:48px;">
+        <div class="section-eyebrow" style="text-align:center;">Questions</div>
+        <div class="section-title">Everything you need to know</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" type="button" onclick="toggleFaq(this)">
+          What size are the tees?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">All tees are 3 inches (76mm) in height — the standard size for drivers and woods. They work with all standard club sizes and are compatible with any golf ball.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" onclick="toggleFaq(this)">
+          What material are they made of?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">High-quality flexible plastic. They're durable, lightweight, and designed to survive multiple rounds. Far more resilient than wooden tees — they bend on impact instead of snapping.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" onclick="toggleFaq(this)">
+          Is there a minimum order?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">No minimum — our smallest pack is just 10 tees. We also offer bulk packs of 50, 100, and 500 for better value per tee. Perfect for events, tournaments, or gifts.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" onclick="toggleFaq(this)">
+          How fast do you ship?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">Orders placed before 2pm AEST ship same day. Standard shipping is 3–5 business days within Australia. Express options available at checkout. Free shipping on orders over {{ shipping_threshold }}.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" onclick="toggleFaq(this)">
+          Can I use these at any golf course?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-a">Absolutely. These are standard 3-inch plastic golf tees — legal for casual rounds and competitions. We can't speak for your playing partners' reactions, though. That's entirely on you.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo">Fore & <span style="color:var(--gold)">Funny</span>™</div>
+    <div class="footer-links">
+      <a href="{{ shop.privacy_policy.url }}">Privacy Policy</a>
+      <a href="{{ shop.refund_policy.url }}">Shipping & Returns</a>
+      <a href="{{ shop.terms_of_service.url }}">Terms of Service</a>
+      <a href="/pages/contact">Contact</a>
+    </div>
+    <div class="footer-payments">
+      <span class="payment-badge">Visa</span>
+      <span class="payment-badge">MC</span>
+      <span class="payment-badge">PayPal</span>
+      <span class="payment-badge">Amex</span>
+    </div>
+  </footer>
+</div>
+
+{% schema %}
+{
+  "name": "Fore & Funny landing",
+  "tag": "section",
+  "class": "section-fore-funny-landing",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fore & Funny landing"
+    }
+  ]
+}
+{% endschema %}
