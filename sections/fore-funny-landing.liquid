@@ -23,7 +23,7 @@
   <section class="hero" style="padding:0;">
     <nav class="hero-nav">
       <div class="logo">Fore & <span>Funny</span>™</div>
-      <a href="{{ routes.cart_url }}" class="nav-cart" data-fore-funny-cart-link>🛒 Cart ({{ cart.item_count }})</a>
+      {% render 'cart-icon-bubble' %}
     </nav>
 
     <div class="hero-content">
@@ -103,7 +103,7 @@
           }
         </script>
 
-        {% form 'product', product %}
+        {% form 'product', product, id: 'ForeFunnyProductForm', class: 'fore-funny-product-form' %}
           <p class="pack-label">Choose your pack</p>
           <div class="packs">
             {% for variant in product.variants %}

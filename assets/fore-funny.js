@@ -21,6 +21,10 @@ function formatForeFunnyMoney(cents) {
   return `$${(Number(cents) / 100).toFixed(2)} AUD`;
 }
 
+function getShopifyRoot() {
+  return window.Shopify && Shopify.routes ? Shopify.routes.root : '/';
+}
+
 function getSelectedVariant() {
   const selectedOption = document.querySelector('.pack-option.selected');
 
@@ -85,7 +89,7 @@ function selectVariant(el) {
   if (stickyStrong) stickyStrong.textContent = price + ' AUD';
 
   // Fetch variant data and update image
-  fetch('/variants/' + variantId + '.js')
+  fetch(`${getShopifyRoot()}variants/${variantId}.js`)
     .then(r => r.json())
     .then(variant => {
       if (variant.featured_image && variant.featured_image.src) {
@@ -97,7 +101,8 @@ function selectVariant(el) {
           setTimeout(() => mainImg.style.opacity = '1', 50);
         }
       }
-    });
+    })
+    .catch(() => {});
 }
 
 function selectPack(el) {
@@ -112,10 +117,16 @@ function toggleFaq(btn) {
 }
 
 function updateForeFunnyCartCount(count) {
-  const cartLink = document.querySelector('[data-fore-funny-cart-link]');
-  if (cartLink && Number.isInteger(count)) {
-    cartLink.textContent = `🛒 Cart (${count})`;
-  }
+  if (!Number.isInteger(count)) return;
+
+  document.querySelectorAll('[data-cart-count]').forEach((countEl) => {
+    countEl.textContent = count;
+  });
+
+  document.querySelectorAll('[data-fore-funny-cart-link]').forEach((cartLink) => {
+    const itemLabel = count === 1 ? 'item' : 'items';
+    cartLink.setAttribute('aria-label', `View cart, ${count} ${itemLabel}`);
+  });
 }
 
 function addSelectedForeFunnyVariant() {
@@ -128,7 +139,7 @@ function addSelectedForeFunnyVariant() {
     stickyButton.textContent = 'Adding...';
   }
 
-  fetch('/cart/add.js', {
+  fetch(`${getShopifyRoot()}cart/add.js`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -141,11 +152,12 @@ function addSelectedForeFunnyVariant() {
   })
     .then((response) => {
       if (!response.ok) throw new Error('Unable to add item to cart');
-      return fetch('/cart.js', { headers: { 'Accept': 'application/json' } });
+      return fetch(`${getShopifyRoot()}cart.js`, { headers: { 'Accept': 'application/json' } });
     })
     .then((response) => response.json())
     .then((cart) => {
       updateForeFunnyCartCount(cart.item_count);
+      document.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart } }));
       if (stickyButton) stickyButton.textContent = 'Added!';
       setTimeout(() => {
         if (stickyButton) {
@@ -158,6 +170,56 @@ function addSelectedForeFunnyVariant() {
       if (stickyButton) {
         stickyButton.disabled = false;
         stickyButton.textContent = 'Try Again';
+      }
+    });
+}
+
+function handleForeFunnyProductSubmit(event) {
+  const form = event.target;
+  if (!form.matches('form[action*="/cart/add"]')) return;
+  if (event.submitter && event.submitter.name && event.submitter.name !== 'add') return;
+
+  event.preventDefault();
+
+  const addButton = form.querySelector('[name="add"]');
+  const originalText = addButton ? addButton.textContent : '';
+
+  if (addButton) {
+    addButton.disabled = true;
+    addButton.textContent = 'Adding...';
+  }
+
+  fetch(`${getShopifyRoot()}cart/add.js`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json'
+    },
+    body: new FormData(form)
+  })
+    .then((response) => {
+      if (!response.ok) throw new Error('Unable to add item to cart');
+      return fetch(`${getShopifyRoot()}cart.js`, { headers: { 'Accept': 'application/json' } });
+    })
+    .then((response) => response.json())
+    .then((cart) => {
+      updateForeFunnyCartCount(cart.item_count);
+      document.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart } }));
+
+      if (addButton) {
+        addButton.textContent = 'Added to Cart';
+        window.setTimeout(() => {
+          addButton.disabled = false;
+          addButton.textContent = originalText || 'Add to Cart';
+        }, 1200);
+      }
+    })
+    .catch(() => {
+      if (addButton) {
+        addButton.disabled = false;
+        addButton.textContent = 'Try Again';
+        window.setTimeout(() => {
+          addButton.textContent = originalText || 'Add to Cart';
+        }, 1800);
       }
     });
 }
@@ -180,6 +242,12 @@ document.addEventListener('DOMContentLoaded', () => {
     stickyButton.addEventListener('click', addSelectedForeFunnyVariant);
   }
 
+  document.addEventListener('cart:updated', (event) => {
+    if (event.detail && event.detail.cart) {
+      updateForeFunnyCartCount(event.detail.cart.item_count);
+    }
+  });
+
   window.addEventListener('scroll', () => {
     const hero = document.querySelector('.hero');
     if (!stickyAtc || !hero) return;
@@ -193,9 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
   if (productSection) {
-    productSection.addEventListener('submit', (event) => {
-      const form = event.target;
-      if (!form.matches('form[action*="/cart/add"]')) return;
-    });
+    productSection.addEventListener('submit', handleForeFunnyProductSubmit);
   }
 });

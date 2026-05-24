@@ -1,0 +1,119 @@
+{{ 'cart.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
+
+<section class="cart-page" data-cart-page>
+  <header class="cart-page__header">
+    <a class="cart-page__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }} home">
+      Fore & <span>Funny</span>™
+    </a>
+    {% render 'cart-icon-bubble' %}
+  </header>
+
+  <div class="cart-page__inner">
+    <div class="cart-page__title-row">
+      <div>
+        <p class="cart-page__eyebrow">Secure cart</p>
+        <h1 class="cart-page__title">Your Cart</h1>
+      </div>
+      <a class="cart-page__continue" href="{{ routes.all_products_collection_url }}">Continue Shopping</a>
+    </div>
+
+    <div
+      class="cart-empty{% unless cart == empty %} is-hidden{% endunless %}"
+      data-cart-empty
+      {% unless cart == empty %}hidden{% endunless %}
+    >
+      <h2>Your cart is empty</h2>
+      <p>Add your favorite Fore & Funny™ golf tee pack and come back when you are ready to checkout.</p>
+      <a class="cart-button cart-button--primary" href="{{ routes.all_products_collection_url }}">Continue Shopping</a>
+    </div>
+
+    <form
+      action="{{ routes.cart_url }}"
+      method="post"
+      id="CartForm"
+      class="cart-form{% if cart == empty %} is-hidden{% endif %}"
+      data-cart-form
+      {% if cart == empty %}hidden{% endif %}
+    >
+      <div class="cart-status" role="status" aria-live="polite" data-cart-status></div>
+
+      <div class="cart-items" data-cart-items>
+        {% for item in cart.items %}
+          <article
+            class="cart-item"
+            data-cart-item
+            data-cart-item-key="{{ item.key | escape }}"
+          >
+            <a class="cart-item__media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+              {% if item.image %}
+                <img
+                  src="{{ item.image | image_url: width: 240 }}"
+                  alt="{{ item.image.alt | default: item.product.title | escape }}"
+                  width="120"
+                  height="{{ 120 | divided_by: item.image.aspect_ratio | ceil }}"
+                  loading="lazy"
+                >
+              {% else %}
+                <div class="cart-item__placeholder" aria-hidden="true">Fore & Funny™</div>
+              {% endif %}
+            </a>
+
+            <div class="cart-item__details">
+              <a class="cart-item__title" href="{{ item.url }}">{{ item.product.title | escape }}</a>
+
+              {% unless item.product.has_only_default_variant %}
+                <p class="cart-item__variant">{{ item.variant.title | escape }}</p>
+              {% endunless %}
+
+              {% if item.selling_plan_allocation %}
+                <p class="cart-item__meta">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+              {% endif %}
+
+              {% for property in item.properties %}
+                {% assign property_first_char = property.first | slice: 0 %}
+                {% if property.last != blank and property_first_char != '_' %}
+                  <p class="cart-item__meta">
+                    {{ property.first }}:
+                    {% if property.last contains '/uploads/' %}
+                      <a href="{{ property.last }}">{{ property.last | split: '/' | last }}</a>
+                    {% else %}
+                      {{ property.last }}
+                    {% endif %}
+                  </p>
+                {% endif %}
+              {% endfor %}
+
+              <div class="cart-item__mobile-price" data-cart-item-line-price>
+                {{ item.final_line_price | money }} AUD
+              </div>
+            </div>
+
+            <div class="cart-item__controls">
+              {% render 'quantity-input', item: item, line: forloop.index %}
+              <button
+                class="cart-item__remove"
+                type="button"
+                data-cart-remove
+                aria-label="Remove {{ item.product.title | escape }} from cart"
+              >
+                Remove
+              </button>
+            </div>
+
+            <div class="cart-item__price" data-cart-item-line-price>
+              {{ item.final_line_price | money }} AUD
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </form>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Cart items",
+  "settings": []
+}
+{% endschema %}
