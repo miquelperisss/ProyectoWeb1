@@ -1,24 +1,13 @@
-{% doc %}
-Renders the Fore & Funny product variant selector, add-to-cart form, and dynamic checkout button.
-@param {product} product - Product used for the Fore & Funny landing page
-@example
-{% render 'fore-funny-product-form', product: product %}
-{% enddoc %}
+{% assign landing_product = product %}
+{% assign selected_variant = landing_product.selected_or_first_available_variant %}
 
-{% liquid
-  assign landing_product = product
-  assign selected_variant = landing_product.selected_or_first_available_variant
-
-  if landing_product != blank
-    for variant in landing_product.variants
-      if variant.title contains '500'
-        continue
-      elsif variant.title contains '50'
-        assign selected_variant = variant
-      endif
-    endfor
-  endif
-%}
+{% if landing_product != blank %}
+  {% for variant in landing_product.variants %}
+    {% if variant.title contains '50' %}
+      {% assign selected_variant = variant %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
 
 <script type="application/json" id="ForeFunnyProductData">
   {
@@ -27,32 +16,30 @@ Renders the Fore & Funny product variant selector, add-to-cart form, and dynamic
 </script>
 
 {% if landing_product != blank %}
-  {% form 'product', landing_product, id: 'ForeFunnyProductForm', class: 'fore-funny-product-form' %}
+  <form method="post" action="{{ routes.cart_add_url }}" id="ForeFunnyProductForm" class="fore-funny-product-form" accept-charset="UTF-8">
     <p class="pack-label">Choose your pack</p>
     <div class="packs">
       {% for variant in landing_product.variants %}
-        {% liquid
-          assign pack_size = forloop.index
-          if variant.title contains '500'
-            assign pack_size = '500'
-          elsif variant.title contains '100'
-            assign pack_size = '100'
-          elsif variant.title contains '50'
-            assign pack_size = '50'
-          elsif variant.title contains '10'
-            assign pack_size = '10'
-          endif
+        {% assign pack_size = forloop.index %}
+        {% if variant.title contains '500' %}
+          {% assign pack_size = '500' %}
+        {% elsif variant.title contains '100' %}
+          {% assign pack_size = '100' %}
+        {% elsif variant.title contains '50' %}
+          {% assign pack_size = '50' %}
+        {% elsif variant.title contains '10' %}
+          {% assign pack_size = '10' %}
+        {% endif %}
 
-          assign pack_number = pack_size | plus: 0
-          assign per_tee_price = variant.price | divided_by: pack_number | money
-          assign per_tee_text = per_tee_price | append: ' per tee'
+        {% assign pack_number = pack_size | plus: 0 %}
+        {% assign per_tee_price = variant.price | divided_by: pack_number | money %}
+        {% assign per_tee_text = per_tee_price | append: ' per tee' %}
 
-          if pack_size == '100'
-            assign per_tee_text = per_tee_text | append: ' — save 13%'
-          elsif pack_size == '500'
-            assign per_tee_text = per_tee_text | append: ' — best value'
-          endif
-        %}
+        {% if pack_size == '100' %}
+          {% assign per_tee_text = per_tee_text | append: ' — save 13%' %}
+        {% elsif pack_size == '500' %}
+          {% assign per_tee_text = per_tee_text | append: ' — best value' %}
+        {% endif %}
         <button
           type="button"
           class="pack-option{% if variant.id == selected_variant.id %} selected{% endif %}"
@@ -94,8 +81,7 @@ Renders the Fore & Funny product variant selector, add-to-cart form, and dynamic
         Sold Out — {{ selected_variant.price | money }} AUD
       {% endif %}
     </button>
-    {{ form | payment_button }}
-  {% endform %}
+  </form>
 {% else %}
   <p class="pack-label">Choose your pack</p>
   <div class="packs">

@@ -126,7 +126,7 @@
           }
         </script>
 
-        {% form 'product', product, id: 'ForeFunnyProductForm', class: 'fore-funny-product-form' %}
+        <form method="post" action="{{ routes.cart_add_url }}" id="ForeFunnyProductForm" class="fore-funny-product-form" accept-charset="UTF-8">
           <p class="pack-label">Choose your pack</p>
           <div class="packs">
             {% for variant in product.variants %}
@@ -171,7 +171,7 @@
             <span style="display:inline-block; width:8px; height:8px; background:#e85d75; border-radius:50%; animation: pulse 1.5s infinite;"></span>
             <span id="viewerCount">23 people are viewing this right now</span>
           </div>
-        {% endform %}
+        </form>
 
         <div class="trust-row">
           <div class="trust-item"><span class="trust-icon">🔒</span> Secure checkout</div>
