@@ -32,18 +32,18 @@
       </div>
     </nav>
 
-    <div class="hero-content fade-in">
-      <span class="hero-eyebrow">Professional Golf Training Aids — Australia</span>
-      <h1>Equipment that <em>transforms</em> your game.</h1>
-      <p class="hero-sub">Professional-grade golf training aids for Australian golfers serious about improvement.</p>
+    <div class="hero-content fade-in" style="position: relative; z-index: 2; padding: 120px 60px 80px; color: #ffffff;">
+      <span class="hero-eyebrow" style="color: #d4af37;">Professional Golf Training Aids — Australia</span>
+      <h1 style="color: #ffffff;">Equipment that <em>transforms</em> your game.</h1>
+      <p class="hero-sub" style="color: rgba(255,255,255,0.7);">Professional-grade golf training aids for Australian golfers serious about improvement.</p>
       <div class="hero-ctas">
         <button class="btn-primary" type="button" onclick="document.getElementById('products').scrollIntoView({ behavior: 'smooth' })">Shop Training Aids</button>
         <button class="btn-secondary" type="button" onclick="document.getElementById('why').scrollIntoView({ behavior: 'smooth' })">Why SwingEdge™</button>
       </div>
       <div class="hero-stats" aria-label="SwingEdge customer results">
-        <div class="hero-stat"><strong>-4.2</strong><span>avg handicap drop</span></div>
-        <div class="hero-stat"><strong>2800+</strong><span>golfers trained</span></div>
-        <div class="hero-stat"><strong>98%</strong><span>satisfaction</span></div>
+        <div class="hero-stat" style="color: #ffffff;"><strong style="color: #d4af37;">-4.2</strong><span style="color: rgba(255,255,255,0.7);">avg handicap drop</span></div>
+        <div class="hero-stat" style="color: #ffffff;"><strong style="color: #d4af37;">2800+</strong><span style="color: rgba(255,255,255,0.7);">golfers trained</span></div>
+        <div class="hero-stat" style="color: #ffffff;"><strong style="color: #d4af37;">98%</strong><span style="color: rgba(255,255,255,0.7);">satisfaction</span></div>
       </div>
     </div>
 
@@ -79,92 +79,116 @@
   </div>
 
   <section class="products-section" id="products">
-    <div class="section-header fade-in">
-      <span class="section-eyebrow">Our Training Aids</span>
-      <h2 class="section-title">Our Training Aids</h2>
-      <p class="section-subtitle">Six tools. Six faults fixed. Measurable improvement guaranteed.</p>
-    </div>
-
+  <div style="max-width:1200px;margin:0 auto;padding:0 60px;">
+    <div class="section-eyebrow" style="text-align:center;">Our Training Aids</div>
+    <div class="section-title" style="text-align:center;margin-bottom:48px;">Six tools. Six faults fixed.<br><em>Measurable improvement guaranteed.</em></div>
     <div class="products-grid">
-      <article class="product-card fade-in" data-product-card>
-        <div class="product-card__image" aria-hidden="true">🎯</div>
-        <div class="product-card__body">
-          <span class="product-card__category">Swing Training</span>
-          <h3 class="product-card__title">ClickSwing Pro Trainer</h3>
-          <p class="product-card__desc">Retractable training stick with audible click feedback. Trains swing tempo and transition in 15 minutes a day.</p>
-          <div class="product-card__footer" data-stock-target>
-            <div class="product-card__price"><strong>{{ 2995 | money }} AUD</strong><s>{{ 4495 | money }} AUD</s></div>
-            <button class="product-card__button" type="button" data-add-to-cart data-variant-id="{{ clickswing.variants.first.id }}" onclick="addToCart(this.dataset.variantId)">Add to Cart</button>
-          </div>
-        </div>
-      </article>
 
-      <article class="product-card fade-in" data-product-card>
-        <div class="product-card__image" aria-hidden="true">💪</div>
-        <div class="product-card__body">
-          <span class="product-card__category">Arm Connection</span>
-          <h3 class="product-card__title">SwingBand Elite Trainer</h3>
-          <p class="product-card__desc">Neoprene arm band that keeps elbows connected through the swing. Eliminates flying elbow instantly.</p>
-          <div class="product-card__footer" data-stock-target>
-            <div class="product-card__price"><strong>{{ 3495 | money }} AUD</strong><s>{{ 4995 | money }} AUD</s></div>
-            <button class="product-card__button" type="button" data-add-to-cart data-variant-id="{{ swingband.variants.first.id }}" onclick="addToCart(this.dataset.variantId)">Add to Cart</button>
+      {% assign p1 = all_products['clickswing-pro-trainer'] %}
+      <div class="product-card">
+        <div class="product-card-img" style="background:linear-gradient(135deg,#0f2d1e,#2d6b4a);display:flex;align-items:center;justify-content:center;height:200px;font-size:64px;">🎯</div>
+        <div class="product-card-body">
+          <span class="product-card-category">Swing Training</span>
+          <h3 class="product-card-name">ClickSwing Pro Trainer</h3>
+          <p class="product-card-desc">Retractable training stick with audible click feedback. Trains swing tempo and transition in 15 minutes a day.</p>
+          <div class="product-card-footer">
+            <div class="product-card-price">
+              <span class="price-sale">$29.95 AUD</span>
+              <span class="price-compare">$44.95</span>
+            </div>
+            <button class="product-card-atc" onclick="addToCart('{{ p1.variants.first.id }}')">Add to Cart</button>
           </div>
         </div>
-      </article>
+      </div>
 
-      <article class="product-card fade-in" data-product-card>
-        <div class="product-card__image" aria-hidden="true">⛳</div>
-        <div class="product-card__body">
-          <span class="product-card__category">Connection Training</span>
-          <h3 class="product-card__title">ArmPlane Smart Ball</h3>
-          <p class="product-card__desc">Inflatable ball held between arm and chest. If it drops, your swing lost connection. Instant honest feedback.</p>
-          <div class="product-card__footer" data-stock-target>
-            <div class="product-card__price"><strong>{{ 2995 | money }} AUD</strong><s>{{ 4495 | money }} AUD</s></div>
-            <button class="product-card__button" type="button" data-add-to-cart data-variant-id="{{ armplane.variants.first.id }}" onclick="addToCart(this.dataset.variantId)">Add to Cart</button>
+      {% assign p2 = all_products['swingband-elite-trainer'] %}
+      <div class="product-card">
+        <div class="product-card-img" style="background:linear-gradient(135deg,#0f2d1e,#2d6b4a);display:flex;align-items:center;justify-content:center;height:200px;font-size:64px;">💪</div>
+        <div class="product-card-body">
+          <span class="product-card-category">Arm Connection</span>
+          <h3 class="product-card-name">SwingBand Elite Trainer</h3>
+          <p class="product-card-desc">Neoprene arm band that keeps elbows connected through the swing. Eliminates flying elbow instantly.</p>
+          <div class="product-card-footer">
+            <div class="product-card-price">
+              <span class="price-sale">$34.95 AUD</span>
+              <span class="price-compare">$49.95</span>
+            </div>
+            <button class="product-card-atc" onclick="addToCart('{{ p2.variants.first.id }}')">Add to Cart</button>
           </div>
         </div>
-      </article>
+      </div>
 
-      <article class="product-card fade-in" data-product-card>
-        <div class="product-card__image" aria-hidden="true">🖐️</div>
-        <div class="product-card__body">
-          <span class="product-card__category">Grip Training</span>
-          <h3 class="product-card__title">GripForm Corrector</h3>
-          <p class="product-card__desc">Anatomic silicone mould that positions every finger in the correct grip. Works from the very first session.</p>
-          <div class="product-card__footer" data-stock-target>
-            <div class="product-card__price"><strong>{{ 2995 | money }} AUD</strong><s>{{ 4495 | money }} AUD</s></div>
-            <button class="product-card__button" type="button" data-add-to-cart data-variant-id="{{ gripform.variants.first.id }}" onclick="addToCart(this.dataset.variantId)">Add to Cart</button>
+      {% assign p3 = all_products['armplane-smart-ball'] %}
+      <div class="product-card">
+        <div class="product-card-img" style="background:linear-gradient(135deg,#0f2d1e,#2d6b4a);display:flex;align-items:center;justify-content:center;height:200px;font-size:64px;">⛳</div>
+        <div class="product-card-body">
+          <span class="product-card-category">Connection Training</span>
+          <h3 class="product-card-name">ArmPlane Smart Ball</h3>
+          <p class="product-card-desc">Inflatable ball held between arm and chest. If it drops, your swing lost connection. Instant honest feedback.</p>
+          <div class="product-card-footer">
+            <div class="product-card-price">
+              <span class="price-sale">$29.95 AUD</span>
+              <span class="price-compare">$44.95</span>
+            </div>
+            <button class="product-card-atc" onclick="addToCart('{{ p3.variants.first.id }}')">Add to Cart</button>
           </div>
         </div>
-      </article>
+      </div>
 
-      <article class="product-card fade-in" data-product-card>
-        <div class="product-card__image" aria-hidden="true">📐</div>
-        <div class="product-card__body">
-          <span class="product-card__category">Alignment</span>
-          <h3 class="product-card__title">AlignPro Swing Rods</h3>
-          <p class="product-card__desc">Two steel alignment rods used by PGA Tour coaches. Check stance, shoulder line and swing plane in seconds.</p>
-          <div class="product-card__footer" data-stock-target>
-            <div class="product-card__price"><strong>{{ 4995 | money }} AUD</strong><s>{{ 6995 | money }} AUD</s></div>
-            <button class="product-card__button" type="button" data-add-to-cart data-variant-id="{{ alignpro.variants.first.id }}" onclick="addToCart(this.dataset.variantId)">Add to Cart</button>
+      {% assign p4 = all_products['gripform-corrector'] %}
+      <div class="product-card">
+        <div class="product-card-img" style="background:linear-gradient(135deg,#0f2d1e,#2d6b4a);display:flex;align-items:center;justify-content:center;height:200px;font-size:64px;">🖐️</div>
+        <div class="product-card-body">
+          <span class="product-card-category">Grip Training</span>
+          <h3 class="product-card-name">GripForm Corrector</h3>
+          <p class="product-card-desc">Anatomic silicone mould that positions every finger in the correct grip. Works from the very first session.</p>
+          <div class="product-card-footer">
+            <div class="product-card-price">
+              <span class="price-sale">$29.95 AUD</span>
+              <span class="price-compare">$44.95</span>
+            </div>
+            <button class="product-card-atc" onclick="addToCart('{{ p4.variants.first.id }}')">Add to Cart</button>
           </div>
         </div>
-      </article>
+      </div>
 
-      <article class="product-card fade-in" data-product-card>
-        <div class="product-card__image" aria-hidden="true">🦾</div>
-        <div class="product-card__body">
-          <span class="product-card__category">Wrist Correction</span>
-          <h3 class="product-card__title">WristLock Swing Brace</h3>
-          <p class="product-card__desc">Neoprene brace that locks wrist in correct impact position. Eliminates cupping and flipping permanently.</p>
-          <div class="product-card__footer" data-stock-target>
-            <div class="product-card__price"><strong>{{ 3495 | money }} AUD</strong><s>{{ 5495 | money }} AUD</s></div>
-            <button class="product-card__button" type="button" data-add-to-cart data-variant-id="{{ wristlock.variants.first.id }}" onclick="addToCart(this.dataset.variantId)">Add to Cart</button>
+      {% assign p5 = all_products['alignpro-swing-rods'] %}
+      <div class="product-card">
+        <div class="product-card-img" style="background:linear-gradient(135deg,#0f2d1e,#2d6b4a);display:flex;align-items:center;justify-content:center;height:200px;font-size:64px;">📐</div>
+        <div class="product-card-body">
+          <span class="product-card-category">Alignment</span>
+          <h3 class="product-card-name">AlignPro Swing Rods</h3>
+          <p class="product-card-desc">Two steel alignment rods used by PGA Tour coaches. Check stance, shoulder line and swing plane in seconds.</p>
+          <div class="product-card-footer">
+            <div class="product-card-price">
+              <span class="price-sale">$49.95 AUD</span>
+              <span class="price-compare">$69.95</span>
+            </div>
+            <button class="product-card-atc" onclick="addToCart('{{ p5.variants.first.id }}')">Add to Cart</button>
           </div>
         </div>
-      </article>
+      </div>
+
+      {% assign p6 = all_products['wristlock-swing-brace'] %}
+      <div class="product-card">
+        <div class="product-card-img" style="background:linear-gradient(135deg,#0f2d1e,#2d6b4a);display:flex;align-items:center;justify-content:center;height:200px;font-size:64px;">🦾</div>
+        <div class="product-card-body">
+          <span class="product-card-category">Wrist Correction</span>
+          <h3 class="product-card-name">WristLock Swing Brace</h3>
+          <p class="product-card-desc">Neoprene brace that locks wrist in correct impact position. Eliminates cupping and flipping permanently.</p>
+          <div class="product-card-footer">
+            <div class="product-card-price">
+              <span class="price-sale">$34.95 AUD</span>
+              <span class="price-compare">$54.95</span>
+            </div>
+            <button class="product-card-atc" onclick="addToCart('{{ p6.variants.first.id }}')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
     </div>
-  </section>
+  </div>
+</section>
 
   <section class="features-section" id="why">
     <div class="section-header fade-in">
