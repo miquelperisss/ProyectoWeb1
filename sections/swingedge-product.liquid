@@ -64,7 +64,7 @@
           </div>
         {% endif %}
 
-        <form action="/cart/add" method="post" class="product-form" data-urgency-target data-stock-target>
+        <form action="{{ routes.cart_add_url }}" method="post" class="product-form" data-urgency-target data-stock-target>
           <input type="hidden" name="id" value="{{ selected_variant.id }}">
           <button class="atc-btn" type="submit" name="add" data-add-to-cart data-variant-id="{{ selected_variant.id }}" {% unless selected_variant.available %}disabled{% endunless %}>
             {% if selected_variant.available %}Add to Cart — {{ selected_variant.price | money }} AUD{% else %}Sold Out — {{ selected_variant.price | money }} AUD{% endif %}
