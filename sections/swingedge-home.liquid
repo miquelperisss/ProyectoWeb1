@@ -1,11 +1,6 @@
 {% liquid
-  assign clickswing = all_products['clickswing-pro-trainer']
-  assign swingband = all_products['swingband-elite-trainer']
-  assign armplane = all_products['armplane-smart-ball']
-  assign gripform = all_products['gripform-corrector']
-  assign alignpro = all_products['alignpro-swing-rods']
-  assign wristlock = all_products['wristlock-swing-brace']
-  assign featured_variant = clickswing.variants.first
+  assign featured_product = all_products['clickswing-pro-trainer']
+  assign featured_variant = featured_product.variants.first
 %}
 
 <div class="swingedge-shell" data-swingedge-home>
