@@ -1,0 +1,243 @@
+{% liquid
+  assign clickswing = all_products['clickswing-pro-trainer']
+  assign swingband = all_products['swingband-elite-trainer']
+  assign armplane = all_products['armplane-smart-ball']
+  assign gripform = all_products['gripform-corrector']
+  assign alignpro = all_products['alignpro-swing-rods']
+  assign wristlock = all_products['wristlock-swing-brace']
+  assign featured_variant = clickswing.variants.first
+%}
+
+<div class="swingedge-shell" data-swingedge-home>
+  <div class="sticky-atc" id="stickyAtc">
+    <div class="sticky-atc__text">
+      SwingEdge™ — Professional Golf Training Aids
+      <span>Premium training tools shipped across Australia</span>
+    </div>
+    <div class="sticky-atc__actions" data-urgency-target>
+      <button class="sticky-atc-btn" type="button" data-add-to-cart data-variant-id="{{ featured_variant.id }}">Add to Cart</button>
+    </div>
+  </div>
+
+  <section class="hero" id="top">
+    <nav class="hero-nav" aria-label="Main navigation">
+      <a class="logo" href="{{ routes.root_url }}" aria-label="SwingEdge home">Swing<span>Edge</span>™</a>
+      <div class="nav-links">
+        <a href="#products">Training Aids</a>
+        <a href="#why">Why SwingEdge™</a>
+        <a href="#faq">FAQ</a>
+        <a class="nav-cart" href="{{ routes.cart_url }}" data-fore-funny-cart-link aria-label="Open cart, {{ cart.item_count }} items">
+          Cart <span class="nav-cart__count" data-cart-count>{{ cart.item_count }}</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="hero-content fade-in">
+      <span class="hero-eyebrow">Professional Golf Training Aids — Australia</span>
+      <h1>Equipment that <em>transforms</em> your game.</h1>
+      <p class="hero-sub">Professional-grade golf training aids for Australian golfers serious about improvement.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" type="button" onclick="document.getElementById('products').scrollIntoView({ behavior: 'smooth' })">Shop Training Aids</button>
+        <button class="btn-secondary" type="button" onclick="document.getElementById('why').scrollIntoView({ behavior: 'smooth' })">Why SwingEdge™</button>
+      </div>
+      <div class="hero-stats" aria-label="SwingEdge customer results">
+        <div class="hero-stat"><strong>-4.2</strong><span>avg handicap drop</span></div>
+        <div class="hero-stat"><strong>2800+</strong><span>golfers trained</span></div>
+        <div class="hero-stat"><strong>98%</strong><span>satisfaction</span></div>
+      </div>
+    </div>
+
+    <div class="hero-image fade-in">
+      <div class="hero-image__frame">
+        {% if section.settings.hero_image != blank %}
+          <img src="{{ section.settings.hero_image | image_url: width: 1100 }}" alt="SwingEdge golf training aids" width="1100" height="1300">
+        {% endif %}
+        <div class="floating-card floating-card--one">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11v10"/><path d="M17 11v10"/><path d="M7 11a5 5 0 0 1 10 0"/><path d="M9 4h6"/></svg>
+          <div><strong>Grip Training</strong><span>Correct hand position</span></div>
+        </div>
+        <div class="floating-card floating-card--two">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19c4-10 10-14 16-14"/><path d="M7 16l2 2 4-4"/><path d="M15 7h5v5"/></svg>
+          <div><strong>Swing Analysis</strong><span>Immediate feedback</span></div>
+        </div>
+        <div class="floating-card floating-card--three">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M4 12h4M16 12h4M12 4v4M12 16v4"/></svg>
+          <div><strong>Arm Connection</strong><span>Stay linked through impact</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="proof-bar" aria-label="Store benefits">
+    <div class="proof-item"><span class="stars">★★★★★</span> <strong>4.9/5</strong> 312 verified reviews</div>
+    <span class="proof-dot" aria-hidden="true"></span>
+    <div class="proof-item">Ships fast across Australia</div>
+    <span class="proof-dot" aria-hidden="true"></span>
+    <div class="proof-item">Free shipping over $60 AUD</div>
+    <span class="proof-dot" aria-hidden="true"></span>
+    <div class="proof-item">30-day money back guarantee</div>
+  </div>
+
+  <section class="products-section" id="products">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">Our Training Aids</span>
+      <h2 class="section-title">Our Training Aids</h2>
+      <p class="section-subtitle">Six tools. Six faults fixed. Measurable improvement guaranteed.</p>
+    </div>
+
+    <div class="products-grid">
+      <article class="product-card fade-in" data-product-card>
+        <div class="product-card__image" aria-hidden="true">🎯</div>
+        <div class="product-card__body">
+          <span class="product-card__category">Swing Training</span>
+          <h3 class="product-card__title">ClickSwing Pro Trainer</h3>
+          <p class="product-card__desc">Retractable training stick with audible click feedback. Trains swing tempo and transition in 15 minutes a day.</p>
+          <div class="product-card__footer" data-stock-target>
+            <div class="product-card__price"><strong>{{ 2995 | money }} AUD</strong><s>{{ 4495 | money }} AUD</s></div>
+            <button class="product-card__button" type="button" data-add-to-cart data-variant-id="{{ clickswing.variants.first.id }}" onclick="addToCart(this.dataset.variantId)">Add to Cart</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="product-card fade-in" data-product-card>
+        <div class="product-card__image" aria-hidden="true">💪</div>
+        <div class="product-card__body">
+          <span class="product-card__category">Arm Connection</span>
+          <h3 class="product-card__title">SwingBand Elite Trainer</h3>
+          <p class="product-card__desc">Neoprene arm band that keeps elbows connected through the swing. Eliminates flying elbow instantly.</p>
+          <div class="product-card__footer" data-stock-target>
+            <div class="product-card__price"><strong>{{ 3495 | money }} AUD</strong><s>{{ 4995 | money }} AUD</s></div>
+            <button class="product-card__button" type="button" data-add-to-cart data-variant-id="{{ swingband.variants.first.id }}" onclick="addToCart(this.dataset.variantId)">Add to Cart</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="product-card fade-in" data-product-card>
+        <div class="product-card__image" aria-hidden="true">⛳</div>
+        <div class="product-card__body">
+          <span class="product-card__category">Connection Training</span>
+          <h3 class="product-card__title">ArmPlane Smart Ball</h3>
+          <p class="product-card__desc">Inflatable ball held between arm and chest. If it drops, your swing lost connection. Instant honest feedback.</p>
+          <div class="product-card__footer" data-stock-target>
+            <div class="product-card__price"><strong>{{ 2995 | money }} AUD</strong><s>{{ 4495 | money }} AUD</s></div>
+            <button class="product-card__button" type="button" data-add-to-cart data-variant-id="{{ armplane.variants.first.id }}" onclick="addToCart(this.dataset.variantId)">Add to Cart</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="product-card fade-in" data-product-card>
+        <div class="product-card__image" aria-hidden="true">🖐️</div>
+        <div class="product-card__body">
+          <span class="product-card__category">Grip Training</span>
+          <h3 class="product-card__title">GripForm Corrector</h3>
+          <p class="product-card__desc">Anatomic silicone mould that positions every finger in the correct grip. Works from the very first session.</p>
+          <div class="product-card__footer" data-stock-target>
+            <div class="product-card__price"><strong>{{ 2995 | money }} AUD</strong><s>{{ 4495 | money }} AUD</s></div>
+            <button class="product-card__button" type="button" data-add-to-cart data-variant-id="{{ gripform.variants.first.id }}" onclick="addToCart(this.dataset.variantId)">Add to Cart</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="product-card fade-in" data-product-card>
+        <div class="product-card__image" aria-hidden="true">📐</div>
+        <div class="product-card__body">
+          <span class="product-card__category">Alignment</span>
+          <h3 class="product-card__title">AlignPro Swing Rods</h3>
+          <p class="product-card__desc">Two steel alignment rods used by PGA Tour coaches. Check stance, shoulder line and swing plane in seconds.</p>
+          <div class="product-card__footer" data-stock-target>
+            <div class="product-card__price"><strong>{{ 4995 | money }} AUD</strong><s>{{ 6995 | money }} AUD</s></div>
+            <button class="product-card__button" type="button" data-add-to-cart data-variant-id="{{ alignpro.variants.first.id }}" onclick="addToCart(this.dataset.variantId)">Add to Cart</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="product-card fade-in" data-product-card>
+        <div class="product-card__image" aria-hidden="true">🦾</div>
+        <div class="product-card__body">
+          <span class="product-card__category">Wrist Correction</span>
+          <h3 class="product-card__title">WristLock Swing Brace</h3>
+          <p class="product-card__desc">Neoprene brace that locks wrist in correct impact position. Eliminates cupping and flipping permanently.</p>
+          <div class="product-card__footer" data-stock-target>
+            <div class="product-card__price"><strong>{{ 3495 | money }} AUD</strong><s>{{ 5495 | money }} AUD</s></div>
+            <button class="product-card__button" type="button" data-add-to-cart data-variant-id="{{ wristlock.variants.first.id }}" onclick="addToCart(this.dataset.variantId)">Add to Cart</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="features-section" id="why">
+    <div class="section-header fade-in">
+      <span class="section-eyebrow">Why SwingEdge™</span>
+      <h2 class="section-title">Seriously effective. <em>Seriously professional.</em></h2>
+      <p class="section-subtitle">Professional tools built around the fundamentals coaches measure first.</p>
+    </div>
+    <div class="features-grid">
+      <article class="feature-card fade-in">
+        <div class="feature-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20"/><path d="M5 9h14"/><path d="M7 16h10"/></svg></div>
+        <h3 class="feature-title">Instant feedback real results</h3>
+        <p class="feature-text">Every tool gives immediate honest feedback, no coach needed, build correct muscle memory from day one.</p>
+      </article>
+      <article class="feature-card fade-in">
+        <div class="feature-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20 20 4"/><path d="M6 6h12v12"/><circle cx="8" cy="16" r="2"/></svg></div>
+        <h3 class="feature-title">Tour-proven methods</h3>
+        <p class="feature-text">Same drills used by PGA Tour coaches, alignment rods, connection trainers, wrist correctors, now available to every Australian golfer.</p>
+      </article>
+      <article class="feature-card fade-in">
+        <div class="feature-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13a8 8 0 1 0 3-6"/><path d="M4 4v6h6"/><path d="m9 12 2 2 4-5"/></svg></div>
+        <h3 class="feature-title">Results in 2-3 weeks</h3>
+        <p class="feature-text">15-20 minutes daily practice produces measurable improvement, most customers notice difference within first 5 sessions.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="gift-section" id="gift">
+    <div class="gift-inner fade-in">
+      <div class="gift-content">
+        <span class="section-eyebrow">Premium golf gifts</span>
+        <h2 class="section-title">For the golfer who wants to actually improve</h2>
+        <p class="gift-text">They've got the clubs, the bag, the rangefinder. But they don't have the training tools that will genuinely lower their handicap. Give them something that makes a real difference.</p>
+        <div class="gift-tags">
+          <span class="gift-tag">Birthdays</span><span class="gift-tag">Father's Day</span><span class="gift-tag">Bachelor Parties</span><span class="gift-tag">Christmas</span><span class="gift-tag">Golf Tournaments</span>
+        </div>
+        <button class="btn-primary" type="button" onclick="document.getElementById('products').scrollIntoView({ behavior: 'smooth' })">Shop Training Aids</button>
+      </div>
+      <div class="gift-visual"><div class="gift-visual__quote">Lower their handicap. Raise their game.</div></div>
+    </div>
+  </section>
+
+  <section class="faq-section" id="faq">
+    <div class="faq-inner fade-in">
+      <div class="section-header"><span class="section-eyebrow">FAQ</span><h2 class="section-title">Everything serious golfers ask first.</h2></div>
+      <div class="faq-item open"><button class="faq-q" type="button" onclick="toggleFaq(this)">Are these suitable for beginners?<span class="faq-icon"></span></button><div class="faq-a">Yes, all tools are designed to be used without a coach, with clear instructions, and they work from day one.</div></div>
+      <div class="faq-item"><button class="faq-q" type="button" onclick="toggleFaq(this)">How long before I see results?<span class="faq-icon"></span></button><div class="faq-a">Most notice a difference in 3-5 sessions. We recommend 15-20 minutes, 3x per week for 3-4 weeks.</div></div>
+      <div class="faq-item"><button class="faq-q" type="button" onclick="toggleFaq(this)">Can I use these at any golf course?<span class="faq-icon"></span></button><div class="faq-a">Yes, use them at the range, practice green, at home, or during casual rounds on any course.</div></div>
+      <div class="faq-item"><button class="faq-q" type="button" onclick="toggleFaq(this)">How fast do you ship?<span class="faq-icon"></span></button><div class="faq-a">Orders before 2pm AEST ship same day. Standard delivery is 3-5 business days across Australia, with free shipping over $60 AUD.</div></div>
+      <div class="faq-item"><button class="faq-q" type="button" onclick="toggleFaq(this)">What if it does not work for me?<span class="faq-icon"></span></button><div class="faq-a">You are covered by a 30-day money back guarantee, no questions asked. Contact us and we sort it immediately.</div></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div><a class="footer-logo" href="{{ routes.root_url }}">Swing<span>Edge</span>™</a><p>Premium golf training aids for Australian players serious about lowering scores and building repeatable mechanics.</p></div>
+      <div class="footer-links" aria-label="Footer links">
+        <a href="#products">Training Aids</a>
+        <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}">Privacy Policy</a>
+        <a href="{{ shop.refund_policy.url | default: '/policies/refund-policy' }}">Refund Policy</a>
+        <a href="{{ shop.terms_of_service.url | default: '/policies/terms-of-service' }}">Terms of Service</a>
+        <a href="/pages/contact">Contact</a>
+      </div>
+      <div><p><strong>Secure payments accepted</strong></p><div class="payment-badges" aria-label="Accepted payment methods"><span class="payment-badge">Visa</span><span class="payment-badge">MC</span><span class="payment-badge">PayPal</span><span class="payment-badge">Amex</span></div></div>
+    </div>
+    <div class="footer-bottom">&copy; {{ 'now' | date: '%Y' }} SwingEdge™. All rights reserved.</div>
+  </footer>
+</div>
+
+{% schema %}
+{
+  "name": "SwingEdge Home",
+  "tag": "section",
+  "settings": [],
+  "presets": [{ "name": "SwingEdge Home" }]
+}
+{% endschema %}

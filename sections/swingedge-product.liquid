@@ -1,0 +1,97 @@
+{% liquid
+  assign selected_variant = product.selected_or_first_available_variant
+  assign compare_price = selected_variant.compare_at_price
+%}
+
+<section class="product-page">
+  <div class="product-page__wrap">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a><span>&gt;</span><a href="{{ routes.all_products_collection_url }}">Training Aids</a><span>&gt;</span><span>{{ product.title | escape }}</span>
+    </nav>
+
+    <div class="product-layout">
+      <div class="product-gallery fade-in">
+        <div class="product-main-image" data-main-product-image>
+          {% if product.featured_image %}
+            <img src="{{ product.featured_image | image_url: width: 1100 }}" alt="{{ product.featured_image.alt | default: product.title | escape }}" width="1100" height="1100">
+          {% else %}
+            <div class="product-placeholder" aria-hidden="true">⛳</div>
+          {% endif %}
+        </div>
+        <div class="product-thumbs" aria-label="Product thumbnails">
+          {% for image in product.images limit: 4 %}
+            <button class="product-thumb{% if forloop.first %} is-active{% endif %}" type="button" data-gallery-thumb data-full-image="{{ image | image_url: width: 1100 }}" data-image-alt="{{ image.alt | default: product.title | escape }}">
+              <img src="{{ image | image_url: width: 220 }}" alt="{{ image.alt | default: product.title | escape }}" width="220" height="220" loading="lazy">
+            </button>
+          {% else %}
+            {% for i in (1..4) %}
+              <button class="product-thumb{% if forloop.first %} is-active{% endif %}" type="button" aria-label="Product image placeholder {{ i }}"><span class="product-placeholder" aria-hidden="true">⛳</span></button>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="product-info-panel fade-in" data-product-form>
+        <span class="product-page__eyebrow">Professional Golf Training Aid</span>
+        <h1 class="product-page__title">{{ product.title }}</h1>
+        <div class="product-rating"><span class="stars">★★★★★</span><span>4.9 verified rating</span></div>
+
+        <div class="product-price">
+          <strong data-product-price>{{ selected_variant.price | money }} AUD</strong>
+          {% if compare_price > selected_variant.price %}
+            <s data-product-compare-price>{{ compare_price | money }} AUD</s>
+          {% else %}
+            <s data-product-compare-price></s>
+          {% endif %}
+        </div>
+
+        {% if product.has_only_default_variant == false %}
+          <div class="variant-selector" aria-label="Choose an option">
+            <p class="product-card__category">Choose option</p>
+            <div class="variant-options">
+              {% for variant in product.variants %}
+                <button
+                  class="variant-option{% if variant.id == selected_variant.id %} selected is-active{% endif %}"
+                  type="button"
+                  data-variant-id="{{ variant.id }}"
+                  data-price="{{ variant.price | money }} AUD"
+                  data-compare-price="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }} AUD{% endif %}"
+                  onclick="selectVariant(this.closest('[data-product-form]'), '{{ variant.id }}')"
+                  {% unless variant.available %}disabled{% endunless %}
+                >{{ variant.title }}</button>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        <form action="/cart/add" method="post" class="product-form" data-urgency-target data-stock-target>
+          <input type="hidden" name="id" value="{{ selected_variant.id }}">
+          <button class="atc-btn" type="submit" name="add" data-add-to-cart data-variant-id="{{ selected_variant.id }}" {% unless selected_variant.available %}disabled{% endunless %}>
+            {% if selected_variant.available %}Add to Cart — {{ selected_variant.price | money }} AUD{% else %}Sold Out — {{ selected_variant.price | money }} AUD{% endif %}
+          </button>
+        </form>
+
+        <div class="trust-row" aria-label="Purchase benefits"><div class="trust-item">Secure checkout</div><div class="trust-item">Ships in 24h</div><div class="trust-item">30-day returns</div></div>
+        <div class="product-description">{{ product.description }}</div>
+
+        <div class="product-faq">
+          <h2 class="section-title">Product FAQ</h2>
+          <div class="faq-item open"><button class="faq-q" type="button" onclick="toggleFaq(this)">Is this suitable for beginners?<span class="faq-icon"></span></button><div class="faq-a">Yes. SwingEdge training aids are designed for simple, repeatable practice without needing a coach beside you.</div></div>
+          <div class="faq-item"><button class="faq-q" type="button" onclick="toggleFaq(this)">How often should I use it?<span class="faq-icon"></span></button><div class="faq-a">Use it for 15-20 minutes, three times per week. Most customers notice a difference within their first five sessions.</div></div>
+          <div class="faq-item"><button class="faq-q" type="button" onclick="toggleFaq(this)">Where can I train with it?<span class="faq-icon"></span></button><div class="faq-a">Use it at home, at the range, on the practice green, or during casual practice rounds.</div></div>
+          <div class="faq-item"><button class="faq-q" type="button" onclick="toggleFaq(this)">How fast do you ship?<span class="faq-icon"></span></button><div class="faq-a">Orders placed before 2pm AEST ship the same day, with standard delivery typically taking 3-5 business days in Australia.</div></div>
+          <div class="faq-item"><button class="faq-q" type="button" onclick="toggleFaq(this)">What if it does not work for me?<span class="faq-icon"></span></button><div class="faq-a">You are covered by our 30-day money back guarantee. Contact us and we will sort it immediately.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "SwingEdge Product",
+  "tag": "section",
+  "settings": [],
+  "presets": [{ "name": "SwingEdge Product" }]
+}
+{% endschema %}
