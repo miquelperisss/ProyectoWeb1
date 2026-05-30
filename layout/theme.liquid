@@ -2,13 +2,30 @@
 <html lang="{{ request.locale.iso_code }}">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fore & Funny™ Golf Tees — The Funniest Tee on the Course</title>
-    <meta name="description" content="Novelty bikini lady plastic golf tees. 3-inch, multicolor, durable. The perfect gift for any golfer. Ships in 24h.">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#0f2d1e">
     <link rel="canonical" href="{{ canonical_url }}">
+    {% comment %}theme-check-disable RemoteAsset{% endcomment %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
+    {% comment %}theme-check-enable RemoteAsset{% endcomment %}
+    <title>{{ page_title }}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}</title>
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% else %}
+      <meta name="description" content="SwingEdge™ premium golf training aids for Australian golfers serious about measurable improvement.">
+    {% endif %}
     {{ content_for_header }}
+    {{ 'fore-funny.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'fore-funny.js' | asset_url }}" defer="defer"></script>
   </head>
-  <body>
-    {{ content_for_layout }}
+  <body class="template-{{ request.page_type | handle }}">
+    <a class="skip-link" href="#MainContent">Skip to content</a>
+    <main id="MainContent" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+    <div id="SwingEdgeCartDrawerMount" aria-hidden="true"></div>
   </body>
 </html>

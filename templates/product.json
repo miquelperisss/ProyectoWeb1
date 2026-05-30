@@ -1,11 +1,9 @@
 {
   "sections": {
-    "fore_funny_landing": {
-      "type": "fore-funny-landing",
+    "main": {
+      "type": "swingedge-product",
       "settings": {}
     }
   },
-  "order": [
-    "fore_funny_landing"
-  ]
+  "order": ["main"]
 }

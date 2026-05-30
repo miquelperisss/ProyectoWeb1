@@ -1,21 +1,16 @@
 {
   "current": {
-    "fore_funny_hero_headline": "The only tee that makes you smile <em>before</em> your swing.",
-    "fore_funny_hero_subheadline": "Premium plastic golf tees with a twist. 3-inch height, perfect balance, and a design that'll get a laugh on any course.",
-    "fore_funny_sold_count": "12K+",
-    "fore_funny_rating": "4.9",
-    "fore_funny_review_count": "847",
-    "fore_funny_shipping_threshold": "$60 AUD",
+    "swingedge_store_badge": "Professional Golf Training Aids \u2014 Australia",
     "color_schemes": {
       "scheme-1": {
         "settings": {
-          "background": "#ffffff",
+          "background": "#f5f0e8",
           "background_gradient": "",
-          "text": "#121212",
-          "button": "#121212",
-          "button_label": "#ffffff",
-          "secondary_button_label": "#121212",
-          "shadow": "#121212"
+          "text": "#0f2d1e",
+          "button": "#d4af37",
+          "button_label": "#0f2d1e",
+          "secondary_button_label": "#0f2d1e",
+          "shadow": "#0f2d1e"
         }
       }
     }
