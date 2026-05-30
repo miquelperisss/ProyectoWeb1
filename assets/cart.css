@@ -1,9 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;700&display=swap');
-
 :root {
-  --green: #1a4731;
+  --green: #0f2d1e;
   --green-light: #2d6b4a;
-  --green-dark: #0f2d1e;
+  --green-dark: #07150e;
   --cream: #f5f0e8;
   --cream-dark: #ebe4d6;
   --gold: #d4af37;

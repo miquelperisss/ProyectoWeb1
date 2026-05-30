@@ -17,7 +17,7 @@
     linePrice: '[data-cart-item-line-price]'
   };
 
-  class ForeFunnyCart {
+  class SwingEdgeCart {
     constructor(root) {
       this.root = root;
       this.form = document.querySelector(selectors.form);
@@ -274,6 +274,6 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     const cartPage = document.querySelector(selectors.page);
-    if (cartPage) new ForeFunnyCart(cartPage);
+    if (cartPage) new SwingEdgeCart(cartPage);
   });
 })();

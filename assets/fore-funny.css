@@ -228,9 +228,60 @@ button, input { font: inherit; }
 .fade-in.is-visible { opacity: 1; transform: translateY(0); }
 @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.45); opacity: .48; } }
 
+
+/* SwingEdge collection page */
+.collection-hero {
+  position: relative;
+  min-height: 58vh;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+  color: var(--white);
+  background:
+    radial-gradient(circle at 78% 20%, rgba(212, 175, 55, 0.18), transparent 32%),
+    linear-gradient(135deg, var(--green), var(--green-mid));
+}
+.collection-hero::after {
+  content: '';
+  position: absolute;
+  right: -12%;
+  bottom: -34%;
+  width: 58vw;
+  height: 58vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.14), transparent 66%);
+  pointer-events: none;
+}
+.collection-hero__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  padding: 132px clamp(18px, 5vw, 72px) 72px;
+}
+.collection-hero__inner h1 {
+  margin: 26px 0 18px;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 7vw, 6.2rem);
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: -0.055em;
+}
+.collection-hero__inner p {
+  max-width: 660px;
+  margin: 0 0 32px;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: clamp(1.04rem, 1.4vw, 1.25rem);
+  line-height: 1.7;
+}
+.swingedge-collection-page .products-section {
+  padding-top: clamp(64px, 8vw, 104px);
+}
+
 @media (max-width: 900px) {
   body { padding-bottom: 96px; }
   .hero, .gift-inner, .product-layout { grid-template-columns: 1fr; }
+  .collection-hero { min-height: auto; }
+  .collection-hero__inner { padding-top: 118px; }
   .hero { min-height: auto; }
   .hero-content { padding-top: 118px; padding-bottom: 44px; }
   .hero-image { min-height: auto; padding-top: 16px; }
@@ -252,7 +303,7 @@ button, input { font: inherit; }
   .logo { font-size: 1.25rem; }
   .nav-cart { padding: 0 11px; }
   .hero-content { padding-inline: 16px; }
-  .hero h1 { font-size: 3.05rem; }
+  .hero h1, .collection-hero__inner h1 { font-size: 3.05rem; }
   .hero-stat { padding: 14px; }
   .hero-image__frame { min-height: 360px; border-radius: 24px; }
   .floating-card { position: static; min-width: 0; width: calc(100% - 28px); margin: 10px auto; }

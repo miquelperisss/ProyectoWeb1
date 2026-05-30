@@ -1,11 +1,9 @@
 {
   "sections": {
-    "main-collection-product-grid": {
-      "type": "main-collection-product-grid",
+    "main": {
+      "type": "swingedge-collection",
       "settings": {}
     }
   },
-  "order": [
-    "main-collection-product-grid"
-  ]
+  "order": ["main"]
 }
